@@ -1,0 +1,8 @@
+name: dice
+author: Lars Tackmann <lars@solvr.io>
+homepage: https://github.com/ltackmann/dice
+description: Lightweight dependency injection framework for Dart.
+
+dependencies:
+  unittest: any
+  meta: any
