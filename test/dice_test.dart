@@ -3,6 +3,8 @@
 // This open source software is governed by the license terms 
 // specified in the LICENSE file
 
+library dice_test;
+
 import "../lib/dice.dart";
 import "package:meta/meta.dart";
 import "package:unittest/unittest.dart";

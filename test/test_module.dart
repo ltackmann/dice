@@ -3,6 +3,8 @@
 // This open source software is governed by the license terms 
 // specified in the LICENSE file
 
+part of dice_test;
+
 class RealBillingService implements BillingService {
   @inject
   RealBillingService(this.processor, this.transactionLog);
