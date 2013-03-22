@@ -19,9 +19,9 @@ Quick Guide
     class MyModule extends Module {
       @override
       configure() {
-        // always return the same instance
+        // always returns the same instance
         bind(MyClass).toInstance(new MyClass());
-        // invoke builder everytime type is requested
+        // invokes builder everytime type is requested
         bind(MyOtherClass).toBuilder(() => new MyOtherClass());
       }
     }
