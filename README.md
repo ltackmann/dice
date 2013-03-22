@@ -10,8 +10,7 @@ Quick Guide
 1. Add the folowing to your **pubspec.yaml** and run **pub install**
 ```
     dependencies:
-      dice:
-        git: git://github.com/ltackmann/dice.git
+      dice: any
 ```
 
 2. Create a module where you bind types to their instances
