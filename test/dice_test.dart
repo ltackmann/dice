@@ -12,7 +12,7 @@ part "test_classes.dart";
 part "test_module.dart";
 
 main() {
-  group("injector injection", () {
+  group("dice inject -", () {
     var injector = new Injector(new MyModule());
     
     test("singleton", () {
