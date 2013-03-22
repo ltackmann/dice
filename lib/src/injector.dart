@@ -10,6 +10,7 @@ part of dice;
 class Injector {
   Injector(this._module) {
     _module.configure();
+    _module.injector = this;
   }
   
   dynamic getInstance(Type type) {

@@ -8,9 +8,9 @@ part of dice;
  * Associates types with their concrete instances returned by the [Injector]
  */
 abstract class Module {
-  // TODO parent/child modules like guice 
-  Module(): _bindings = new Map<Type, Binder>();
-  
+  /**
+   * Bind a type implementation to this [Module]
+   */
   Binder bind(Type type) {
     // TODO what happens if type is already bound ? (check guice)
     var binder = new Binder();
@@ -18,13 +18,23 @@ abstract class Module {
     return binder;
   }
   
+  /**
+   * Configure type/instace bindings used in this module
+   */
   configure();
+  
+  /**
+   * Get a reference to the [Injecor] that loads classes using this [Module]. 
+   * 
+   * **Note** may return null if no injector is yet created
+   */
+  Injector injector;
   
   bool _hasBindingFor(Type type) => _bindings.containsKey(type);
   
   Binder _getBindingFor(Type type) => _bindings[type];
   
-  Map<Type, Binder> _bindings;
+  final Map<Type, Binder> _bindings = new Map<Type, Binder>();
 }
 
 
