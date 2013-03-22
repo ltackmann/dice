@@ -19,10 +19,10 @@ dependencies:
 class MyModule extends Module {
   @override 
   configure() {
-    // singleton
+    // always return the same instance
     bind(MyClass).toInstance(new MyClass());
-    // instance builder
-    bind(MyOtherClass).toInstanceBuilder(() => new MyOtherClass());
+    // invoke builder everytime type is requested
+    bind(MyOtherClass).toBuilder(() => new MyOtherClass());
   }
 }
 ```
