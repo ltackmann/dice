@@ -1,14 +1,11 @@
-// Copyright (c) 2013 Solvr, Inc. All rights reserved.
-//
-// This open source software is governed by the license terms 
-// specified in the LICENSE file
+// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed 
+// by a Apache license that can be found in the LICENSE file.
 
 part of dice;
 
 /**
- * Builds the graphs of objects that make up your application
- * 
- * TODO write a more customer friendly description
+ * Resolve types to their implementing classes
  */
 class Injector {
   Injector(this._module) {
@@ -25,15 +22,15 @@ class Injector {
     }
     
     var binder = _module._getBindingFor(type);
-    // TODO use reflection to resolve sub dependencies
-    return binder._instance;
+    // TODO use reflection to resolve sub dependencies when dart:mirrors support access to meta information
+    return binder._builder();
   }
   
   Module _module;
 }
 
 /**
- * Used to annotate members of your classes (constructors, methods and fields) where the [Injector] should inject values
+ * Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values
  */
 const inject = const _Inject();
 
