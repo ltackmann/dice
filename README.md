@@ -9,22 +9,22 @@ Quick Guide
 
 1. Add the folowing to your **pubspec.yaml** and run **pub install**
 ```
-dependencies:
-  dice:
-    git: git://github.com/ltackmann/dice.git
+    dependencies:
+      dice:
+        git: git://github.com/ltackmann/dice.git
 ```
 
 2. Create a module where you bind instances to classes/typedef's
 ```dart
-class MyModule extends Module {
-  @override 
-  configure() {
-    // always return the same instance
-    bind(MyClass).toInstance(new MyClass());
-    // invoke builder everytime type is requested
-    bind(MyOtherClass).toBuilder(() => new MyOtherClass());
-  }
-}
+    class MyModule extends Module {
+      @override
+      configure() {
+        // always return the same instance
+        bind(MyClass).toInstance(new MyClass());
+        // invoke builder everytime type is requested
+        bind(MyOtherClass).toBuilder(() => new MyOtherClass());
+      }
+    }
 ```
 
 3. Run it
