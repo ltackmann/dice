@@ -14,7 +14,7 @@ Quick Guide
         git: git://github.com/ltackmann/dice.git
 ```
 
-2. Create a module where you bind instances to classes/typedef's
+2. Create a module where you bind types to their instances
 ```dart
     class MyModule extends Module {
       @override
