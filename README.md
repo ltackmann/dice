@@ -8,7 +8,7 @@ Quick Guide
 -----------
 
 1. Add the folowing to your **pubspec.yaml** and run **pub install**
-```
+```yaml
     dependencies:
       dice: any
 ```
