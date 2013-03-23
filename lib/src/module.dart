@@ -23,13 +23,6 @@ abstract class Module {
    */
   configure();
   
-  /**
-   * Get a reference to the [Injecor] that loads classes using this [Module]. 
-   * 
-   * **Note** may return null if no injector is yet created
-   */
-  Injector injector;
-  
   bool _hasBindingFor(Type type) => _bindings.containsKey(type);
   
   Binder _getBindingFor(Type type) => _bindings[type];
