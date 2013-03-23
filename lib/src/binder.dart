@@ -24,6 +24,10 @@ class Binder {
     _builder = builder;
   }
   
+  toClassMirror(ClassMirror mirror) {
+    _builder = () => mirror;
+  }
+  
   TypeBuilder _builder;
 }
 
@@ -31,4 +35,3 @@ class Binder {
  * Function that builds instance of a bound types
  */
 typedef dynamic TypeBuilder();
-
