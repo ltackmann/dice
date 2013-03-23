@@ -16,7 +16,6 @@ Quick Guide
 2. Create a module where you bind types to their instances
 ```dart
     class MyModule extends Module {
-      @override
       configure() {
         // always returns the same instance
         bind(MyClass).toInstance(new MyClass());
