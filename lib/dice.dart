@@ -8,6 +8,8 @@
 library dice;
 
 import "package:meta/meta.dart";
+import "dart:async";
+import "dart:mirrors";
 
 part "src/binder.dart";
 part "src/injector.dart";
