@@ -34,7 +34,7 @@ Quick Guide
 	  configure() {
 	    // bind CreditCardProcessor to a singleton
 	    bind(CreditCardProcessor).toInstance(new CreditCardProcessorImpl());
-	    // bind BillingService to a type
+	    // bind BillingService to a prototype
 	    bind(BillingService).toType(new BillingServiceImpl());
 	  }
 	}
