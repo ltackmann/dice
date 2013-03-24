@@ -15,6 +15,13 @@ main() {
     var order = new Order("Dart: Up and Running");
     billingService.chargeOrder(order, creditCard);
   });
+  /*
+  injector.getInstance(CreditCardProcessor).then((CreditCardProcessor creditCardProcessor) {
+    var creditCard = new CreditCard("VISA");
+    var res = creditCardProcessor.validate(creditCard);
+    print("res is $res");
+  });
+  */
 }
 
 class ExampleModule extends Module {

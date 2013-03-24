@@ -89,16 +89,20 @@ class InjectorImpl implements Injector {
       classMirror.variables.values.where(injectable);
 
   /** Returns true if the declared [element] is injectable */
-  bool injectable(DeclarationMirror element) => element.simpleName.startsWith(r'$') || element.simpleName.startsWith(r'_$');
+  bool injectable(DeclarationMirror element) => 
+      element.simpleName.startsWith(r'$') || element.simpleName.startsWith(r'_$');
   
   /** Returns method name from [MethodMirror] */
-  String methodName(MethodMirror method) => method.simpleName.substring(0, method.simpleName.length - 1);
+  String methodName(MethodMirror method) => 
+      method.simpleName.substring(0, method.simpleName.length - 1);
   
   /** Returns [TypeMirror] for first parameter in method */
-  TypeMirror firstParameter(MethodMirror method) => method.parameters[0].type;
+  TypeMirror firstParameter(MethodMirror method) => 
+      method.parameters[0].type;
   
   /** Returns parameters (including optional) that need injection */
-  Iterable<ParameterMirror> injectableParameters(MethodMirror method) => method.parameters.where(injectable);
+  Iterable<ParameterMirror> injectableParameters(MethodMirror method) => 
+      method.parameters.where(injectable);
 }
 
 /**
