@@ -53,4 +53,4 @@ Quick Guide
 	}
 ```
 
-for more information see the example application [here][example/example_app.dart].
+for more information see the example application [here](example/example_app.dart).
