@@ -7,31 +7,29 @@ library dice_test;
 import "../lib/dice.dart";
 import "dart:async";
 import "dart:mirrors";
-import "package:meta/meta.dart";
 import "package:unittest/unittest.dart";
 
-part "test_classes.dart";
 part "test_module.dart";
 
 main() {
-  group("dice inject -", () {
+  group("injector injection -", () {
     var injector = new Injector(new MyModule());
     
     test("singleton", () {
-      injector.getInstance(MyClass).then(expectAsync1((instance) {
-        expect(instance, isNotNull);
-        expect(instance.getName(), equals("MyClass"));
-        injector.getInstance(MyClass).then(expectAsync1((secondInstance) {
-          expect(identical(instance, secondInstance), isTrue, reason:"must be singleton");
-        }));
+      var futures = [injector.getInstance(MyClass), injector.getInstance(MyClass)]; 
+      Future.wait(futures).then(expectAsync1((List<MyClass> instances) {
+        expect(instances, everyElement(isNotNull));
+        expect(instances.first.getName(), equals("MyClass"));
+        expect(identical(instances[0], instances[1]), isTrue, reason:"must be singleton");
       }));
     });
     
     test("instance", () {
-      injector.getInstance(MyOtherClass).then(expectAsync1((instance) {
-        expect(instance, isNotNull);
-        expect(instance.getName(), equals("MyOtherClass"));
-        expect(identical(instance, injector.getInstance(MyOtherClass)), isFalse, reason:"must be new instance");
+      var futures = [injector.getInstance(MyOtherClass), injector.getInstance(MyOtherClass)]; 
+      Future.wait(futures).then(expectAsync1((List<MyOtherClass> instances) {
+        expect(instances, everyElement(isNotNull));
+        expect(instances, everyElement(predicate((e) => e.getName() == "MyOtherClass", '')));
+        expect(identical(instances[0], instances[1]), isFalse, reason:"must be new instances");
       }));
     });
     
@@ -42,17 +40,17 @@ main() {
       }));
     });
     
-    test("class mirror", () {
+    test("type", () {
       injector.getInstance(MyClassToInject).then(expectAsync1((MyClassToInject instance) {
         expect(instance, isNotNull);
-        expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
+        expect(instance, new isInstanceOf<MyClassToInject>("MyClassToInject"));
         expect(instance.$variableToInject, isNotNull);
         expect(instance._$variableToInject, isNotNull);
-        expect(instance.injections['\$setterToInject'], isNotNull);
-        expect(instance.injections['_\$setterToInject'], isNotNull);
+        expect(instance.injections[r"$setterToInject"], isNotNull);
+        expect(instance.injections[r"_$setterToInject"], isNotNull);
         // FIXME: Until parameters names are supported (returns TODO:unnamed)
-        // expect(instance.injections['setterToInject'], isNotNull);
-        // expect(instance.injections['_setterToInject'], isNotNull);
+        // expect(instance.injections["setterToInject"], isNotNull);
+        // expect(instance.injections["_setterToInject"], isNotNull);
       }));
     });
     
@@ -62,7 +60,7 @@ main() {
     // TODO test annotations
   });
   
-  group("Members to inject -", () {
+  group("internals -", () {
     InjectorImpl injector = new InjectorImpl(new MyModule());
     
     ClassMirror classMirror = reflect(new MyClassToInject()).type;
@@ -72,7 +70,7 @@ main() {
       injector.newInstance(classMirror).then(expectAsync1((InstanceMirror instance) {
         expect(instance, isNotNull);
         expect(instance.reflectee, isNotNull);
-        expect(instance.reflectee, new isInstanceOf<MyClass>('MyClass'));
+        expect(instance.reflectee, new isInstanceOf<MyClass>("MyClass"));
       }));
     });
 
@@ -81,7 +79,7 @@ main() {
       injector.newInstance(classMirror).then(expectAsync1((InstanceMirror instance) {
         expect(instance, isNotNull);
         expect(instance.reflectee, isNotNull);
-        expect(instance.reflectee, new isInstanceOf<MyClassToInject>('MyClassToInject'));
+        expect(instance.reflectee, new isInstanceOf<MyClassToInject>("MyClassToInject"));
       }));
     });
     
@@ -98,9 +96,9 @@ main() {
     test("setters", () {
       var s = classMirror.setters;
       Iterable<MethodMirror> setters = injector.injectableSetters(classMirror).toList();
-      Iterable<MethodMirror> expected = [s["\$setterToInject="], s["_\$setterToInject="]];
+      Iterable<MethodMirror> expected = [s[r"$setterToInject="], s[r"_$setterToInject="]];
       // FIXME: should be this but parameters names are not supported yet (returns TODO:unnamed)
-      // Iterable<MethodMirror> expected = [s["setterToInject="], s["_setterToInject="], s["\$setterToInject="], s["_\$setterToInject="]];
+      // Iterable<MethodMirror> expected = [s["setterToInject="], s["_setterToInject="], s[r"$setterToInject="], s[r"_$setterToInject="]];
       
       expect(setters, unorderedEquals(expected));
     });
@@ -108,7 +106,7 @@ main() {
     test("variables", () {
       var v = classMirror.variables;
       Iterable<VariableMirror> variables = injector.injectableVariables(classMirror).toList();
-      Iterable<VariableMirror> expected = [v["\$variableToInject"], v["_\$variableToInject"]];
+      Iterable<VariableMirror> expected = [v[r"$variableToInject"], v[r"_$variableToInject"]];
       
       expect(variables, unorderedEquals(expected));
     });

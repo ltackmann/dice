@@ -13,24 +13,44 @@ Quick Guide
       dice: any
 ```
 
-2. Create a module where you bind types to their instances
+2. Create some classes and interfaces to inject
 ```dart
-    class MyModule extends Module {
-      configure() {
-        // always returns the same instance
-        bind(MyClass).toInstance(new MyClass());
-        // invokes builder everytime type is requested
-        bind(MyOtherClass).toBuilder(() => new MyOtherClass());
-      }
-    }
+	class BillingServiceImpl implements BillingService {
+	  // fields starting with $ and _$ gets injected
+	  CreditCardProcessor _$processor;
+	  
+	  Receipt chargeOrder(Order order, CreditCard creditCard) {
+	    if(!_$processor.validate(creditCard)) {
+	      throw new ArgumentError("payment method not accepted");
+	    }
+	    // :
+	  }
+	}
 ```
 
-3. Run it
+3. Register the type/class bindings in a module
+```dart
+	class ExampleModule extends Module {
+	  configure() {
+	    // bind CreditCardProcessor to a singleton
+	    bind(CreditCardProcessor).toInstance(new CreditCardProcessorImpl());
+	    // bind BillingService to a type
+	    bind(BillingService).toType(new BillingServiceImpl());
+	  }
+	}
+```
+
+4. Run it
 ```dart
     import "package:dice/dice.dart";
     main() {
-      var injector = new Injector(new MyModule());
-      var myClass = injector.getInstance(MyClass);
-      var myOtherClass = injector.getInstance(MyOtherClass);
-    }
+	  var injector = new Injector(new ExampleModule());
+	  injector.getInstance(BillingService).then((BillingService billingService) {
+	    var creditCard = new CreditCard("VISA");
+	    var order = new Order("Dart: Up and Running");
+	    billingService.chargeOrder(order, creditCard);
+	  });
+	}
 ```
+
+for more information see the example application [here][example/example_app.dart].

@@ -8,25 +8,42 @@ part of dice;
  * Collects configuration information (primarily bindings) which will be used to create an [Injector].
  */
 class Binder {
-  // support more bindings as need arrises https://code.google.com/p/google-guice/wiki/Bindings
-  
   /**
-   * Bind type to a single object instance that will always be returned
+   * Bind to a object [instance] that will be returned when the type is requested
    */
   toInstance(var instance) {
+    if(!_isClass(instance)) {
+      throw new ArgumentError("only objects can be bound using toInstance");
+    }
     _builder = () => instance;
   }
   
   /**
-   * Bind type to a [InstanceBuilder] that will build the returned instances
+   * Bind to a [function] that will be returned when the type is requested
+   */
+  toFunction(var function) {
+    if(_isClass(function)) {
+      throw new ArgumentError("only functions can be bound using toFunction");
+    }
+    _builder = () => function;
+  }
+  
+  /**
+   * Bind to a [InstanceBuilder] that will emit new instances when the type is requested 
    */
   toBuilder(TypeBuilder builder) {
     _builder = builder;
   }
   
-  toClassMirror(ClassMirror mirror) {
+  /**
+   * Bind to a [type] that will be instantiated when the type is requested
+   */
+  toType(var type) {
+    var mirror = reflect(type).type;
     _builder = () => mirror;
   }
+  
+  bool _isClass(var instance) => reflect(instance).type is! FunctionTypeMirror;
   
   TypeBuilder _builder;
 }
