@@ -4,6 +4,6 @@ author: Lars Tackmann <lars@solvr.io>
 homepage: https://github.com/ltackmann/dice
 description: Lightweight dependency injection framework for Dart.
 dependencies:
-  meta: 0.4.2
+  meta: 0.4.3+1
 dev_dependencies:
   unittest: any 
