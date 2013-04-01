@@ -23,7 +23,9 @@ class InjectorImpl implements Injector {
     _module.configure();
   }
   
-  Future<dynamic> getInstance(Type type) {
+  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(getClassMirrorForType(type));
+
+  Future<dynamic> getInstanceFromTypeMirror(TypeMirror type) {
     if(!_module._hasBindingFor(type)) {
       throw new ArgumentError("no instance registered for type $type");
     }
@@ -58,7 +60,7 @@ class InjectorImpl implements Injector {
   Future<InstanceMirror> injectSetters(InstanceMirror instanceMirror) {
       var setters = injectableSetters(instanceMirror.type);
       // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = setters.map((setter) => resolveInjections(firstParameter(setter))
+      var futures = setters.map((setter) => getInstanceFromTypeMirror(firstParameter(setter))
           // use the resolved injections as setter values
           .then((instance) => instanceMirror.setField(methodName(setter), reflect(instance)))); 
       // setters.forEach((s) => instanceMirror.invoke(s.simpleName, [getInstance(s.returnType)])); 
@@ -68,7 +70,7 @@ class InjectorImpl implements Injector {
   Future<InstanceMirror> injectVariables(InstanceMirror instanceMirror) {
       var variables = injectableVariables(instanceMirror.type);
       // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = variables.map((variable) => resolveInjections(variable.type)
+      var futures = variables.map((variable) => getInstanceFromTypeMirror(variable.type)
           // use the resolved injections as variable values
           .then((instance) => instanceMirror.setField(variable.simpleName, reflect(instance)))); 
       // variables.forEach((v) => instanceMirror.setField(v.simpleName, getInstance(v.type)));

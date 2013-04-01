@@ -14,7 +14,7 @@ abstract class Module {
   Binder bind(Type type) {
     // TODO what happens if type is already bound ? (check guice)
     var binder = new Binder();
-    _bindings[type] = binder;
+    _bindings[new TypeMirrorWrapper.fromType(type)] = binder;
     return binder;
   }
   
@@ -23,11 +23,11 @@ abstract class Module {
    */
   configure();
   
-  bool _hasBindingFor(Type type) => _bindings.containsKey(type);
+  bool _hasBindingFor(TypeMirror type) => _bindings.containsKey(new TypeMirrorWrapper(type));
   
-  Binder _getBindingFor(Type type) => _bindings[type];
+  Binder _getBindingFor(TypeMirror type) => _bindings[new TypeMirrorWrapper(type)];
   
-  final Map<Type, Binder> _bindings = new Map<Type, Binder>();
+  final Map<TypeMirrorWrapper, Binder> _bindings = new Map<TypeMirrorWrapper, Binder>();
 }
 
 

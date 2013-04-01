@@ -12,6 +12,7 @@ import "package:meta/meta.dart";
 
 part "src/binder.dart";
 part "src/injector.dart";
+part "src/mirror_util.dart";
 part "src/module.dart";
 
 
