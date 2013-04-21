@@ -13,7 +13,7 @@ Dice supports the following injection forms
  * Setters starting $ are injected
  * Variables starting with $ and _$ are injected
  
-Injection for parameters is unsupported as Dart's mirror system cannot inejct these yet.
+Injection of parameters is unsupported as Dart's mirror system cannot handle these yet.
 
 Quick Guide
 -----------
