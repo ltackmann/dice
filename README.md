@@ -4,6 +4,17 @@ Dice
 ====
 Lightweight dependency injection framework for Dart.
 
+Injection Types
+---------------
+
+Dice supports the following injection forms
+
+ * Fields starting with $ and _$ are injected
+ * Setters starting $ are injected
+ * Variables starting with $ and _$ are injected
+ 
+Injection for parameters is unsupported as Dart's mirror system cannot inejct these yet.
+
 Quick Guide
 -----------
 
@@ -12,6 +23,7 @@ Quick Guide
     dependencies:
       dice: any
 ```
+
 2. Create some classes and interfaces to inject
 ```dart
 	class BillingServiceImpl implements BillingService {
@@ -26,6 +38,7 @@ Quick Guide
 	  }
 	}
 ```
+
 3. Register the type/class bindings in a module
 ```dart
 	class ExampleModule extends Module {
@@ -37,6 +50,7 @@ Quick Guide
 	  }
 	}
 ```
+
 4. Run it
 ```dart
     import "package:dice/dice.dart";
