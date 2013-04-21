@@ -6,7 +6,7 @@ part of dice_example;
 
 class BillingServiceImpl implements BillingService {
   // fields starting with $ and _$ gets injected
-  CreditCardProcessor _$processor;
+  CreditProcessor _$processor;
   
   Receipt chargeOrder(Order order, CreditCard creditCard) {
     if(!(_$processor.validate(creditCard))) {
@@ -17,7 +17,7 @@ class BillingServiceImpl implements BillingService {
   }
 }
 
-class CreditCardProcessorImpl implements CreditCardProcessor {
+class CreditProcessorImpl implements CreditProcessor {
   bool validate(CreditCard card) => card.type.toUpperCase() == "VISA";
 }
 
@@ -25,7 +25,7 @@ abstract class BillingService {
   Receipt chargeOrder(Order order, CreditCard creditCard);
 }
 
-abstract class CreditCardProcessor {
+abstract class CreditProcessor {
   bool validate(CreditCard creditCard);
 }
 

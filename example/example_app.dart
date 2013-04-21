@@ -10,17 +10,17 @@ part "example_classes.dart";
 
 main() {
   var injector = new Injector(new ExampleModule());
-  injector.getInstance(BillingService).then((BillingService billingService) {
+  injector.getInstance(BillingService).then((BillingService billing) {
     var creditCard = new CreditCard("VISA");
     var order = new Order("Dart: Up and Running");
-    billingService.chargeOrder(order, creditCard);
+    billing.chargeOrder(order, creditCard);
   });
 }
 
 class ExampleModule extends Module {
   configure() {
     // bind CreditCardProcessor to a singleton
-    bind(CreditCardProcessor).toInstance(new CreditCardProcessorImpl());
+    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
     // bind BillingService to a type
     bind(BillingService).toType(new BillingServiceImpl());
   }
