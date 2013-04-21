@@ -4,18 +4,14 @@
 
 part of dice;
 
-/**
- * Resolve types to their implementing classes
- */
+/** Resolve types to their implementing classes */
 abstract class Injector {
   factory Injector(module) => new InjectorImpl(module);
   
   Future<dynamic> getInstance(Type type);
 }
 
-/**
- * Implementation of [Injector].
- */
+/** Implementation of [Injector]. */
 class InjectorImpl implements Injector {
   Module _module;
 
@@ -23,7 +19,7 @@ class InjectorImpl implements Injector {
     _module.configure();
   }
   
-  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(getClassMirrorForType(type));
+  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(_getClassMirrorForType(type));
 
   Future<dynamic> getInstanceFromTypeMirror(TypeMirror type) {
     if(!_module._hasBindingFor(type)) {
@@ -39,7 +35,7 @@ class InjectorImpl implements Injector {
   }
   
   Future<dynamic> resolveInjections(dynamic instance) {
-    return (instance is ClassMirror ? newInstance(instance) : new Future.immediate(reflect(instance)))
+    return (instance is ClassMirror ? newInstance(instance) : new Future.value(reflect(instance)))
         .then(injectSetters)
         .then(injectVariables)
         .then((InstanceMirror instanceMirror) => instanceMirror.reflectee);
@@ -49,20 +45,22 @@ class InjectorImpl implements Injector {
     // Look for an injectable constructor
     var constructors = injectableConstructors(classMirror);
     // that has the greatest number of parameters to inject, optional included
-    MethodMirror constructor = constructors.reduce(null, (MethodMirror p, MethodMirror e) => 
+    MethodMirror constructor = constructors.fold(null, (MethodMirror p, MethodMirror e) => 
             p == null || injectableParameters(p).length < injectableParameters(e).length ? e : p);
-    String constructorName = constructor.simpleName.replaceFirst(classMirror.simpleName, "").replaceFirst(".", "");
+    // TODO String constructorName = constructor.simpleName.replaceFirst(classMirror.simpleName, "").replaceFirst(".", "");
+    var constructorName = constructor.simpleName;
     
     // TODO parameters injection
-    return classMirror.newInstance(constructorName, []);
+    return classMirror.newInstanceAsync(constructor.constructorName, []);
   }
   
   Future<InstanceMirror> injectSetters(InstanceMirror instanceMirror) {
       var setters = injectableSetters(instanceMirror.type);
       // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = setters.map((setter) => getInstanceFromTypeMirror(firstParameter(setter))
-          // use the resolved injections as setter values
-          .then((instance) => instanceMirror.setField(methodName(setter), reflect(instance)))); 
+      var futures = setters.map((MethodMirror setter) => 
+          getInstanceFromTypeMirror(firstParameter(setter))
+            // use the resolved injections as setter values
+            .then((instance) => instanceMirror.setFieldAsync(methodName(setter), reflect(instance)))); 
       // setters.forEach((s) => instanceMirror.invoke(s.simpleName, [getInstance(s.returnType)])); 
       return Future.wait(futures).then((_) => instanceMirror);
   }
@@ -70,10 +68,10 @@ class InjectorImpl implements Injector {
   Future<InstanceMirror> injectVariables(InstanceMirror instanceMirror) {
       var variables = injectableVariables(instanceMirror.type);
       // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = variables.map((variable) => getInstanceFromTypeMirror(variable.type)
-          // use the resolved injections as variable values
-          .then((instance) => instanceMirror.setField(variable.simpleName, reflect(instance)))); 
-      // variables.forEach((v) => instanceMirror.setField(v.simpleName, getInstance(v.type)));
+      var futures = variables.map((VariableMirror variable) => 
+          getInstanceFromTypeMirror(variable.type)
+            // use the resolved injections as variable values
+            .then((instance) => instanceMirror.setFieldAsync(variable.simpleName, reflect(instance)))); 
       return Future.wait(futures).then((_) => instanceMirror);
   }
   
@@ -84,7 +82,8 @@ class InjectorImpl implements Injector {
 
   /** Returns setters that need injection */
   Iterable<MethodMirror> injectableSetters(ClassMirror classMirror) => 
-      classMirror.setters.values.where((m) => injectable(m) || m.parameters.every(injectable));
+      // TODO figure out how to inject into private setters
+      classMirror.setters.values.where((m) => injectable(m) || m.parameters.every(injectable)).where((s) => !s.isPrivate);
 
   /** Returns variables that need injection */
   Iterable<VariableMirror> injectableVariables(ClassMirror classMirror) => 
@@ -92,11 +91,14 @@ class InjectorImpl implements Injector {
 
   /** Returns true if the declared [element] is injectable */
   bool injectable(DeclarationMirror element) => 
-      element.simpleName.startsWith(r'$') || element.simpleName.startsWith(r'_$');
+      symbolAsString(element.simpleName).startsWith(r'$') || symbolAsString(element.simpleName).startsWith(r'_$');
   
   /** Returns method name from [MethodMirror] */
-  String methodName(MethodMirror method) => 
-      method.simpleName.substring(0, method.simpleName.length - 1);
+  Symbol methodName(MethodMirror method) {
+    var name = symbolAsString(method.simpleName);
+    var symbolName = name.substring(0, name.length - 1);
+    return stringAsSymbol(symbolName);
+  }
   
   /** Returns [TypeMirror] for first parameter in method */
   TypeMirror firstParameter(MethodMirror method) => 
@@ -107,9 +109,7 @@ class InjectorImpl implements Injector {
       method.parameters.where(injectable);
 }
 
-/**
- * Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values
- */
+/** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
 const inject = const _Inject();
 
 class _Inject {

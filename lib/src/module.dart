@@ -4,13 +4,9 @@
 
 part of dice;
 
-/**
- * Associates types with their concrete instances returned by the [Injector]
- */
+/** Associates types with their concrete instances returned by the [Injector] */
 abstract class Module {
-  /**
-   * Bind a type implementation to this [Module]
-   */
+  /** Bind a type implementation to this [Module] */
   Binder bind(Type type) {
     // TODO what happens if type is already bound ? (check guice)
     var binder = new Binder();
@@ -18,9 +14,7 @@ abstract class Module {
     return binder;
   }
   
-  /**
-   * Configure type/instace bindings used in this module
-   */
+  /** Configure type/instace bindings used in this module */
   configure();
   
   bool _hasBindingFor(TypeMirror type) => _bindings.containsKey(new TypeMirrorWrapper(type));

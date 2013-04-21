@@ -12,7 +12,6 @@ Quick Guide
     dependencies:
       dice: any
 ```
-
 2. Create some classes and interfaces to inject
 ```dart
 	class BillingServiceImpl implements BillingService {
@@ -27,7 +26,6 @@ Quick Guide
 	  }
 	}
 ```
-
 3. Register the type/class bindings in a module
 ```dart
 	class ExampleModule extends Module {
@@ -39,7 +37,6 @@ Quick Guide
 	  }
 	}
 ```
-
 4. Run it
 ```dart
     import "package:dice/dice.dart";
