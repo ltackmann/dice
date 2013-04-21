@@ -41,14 +41,14 @@ Quick Guide
 
 **3.** Register the type/class bindings in a module
 ```dart
-class ExampleModule extends Module {
-  configure() {
-    // bind CreditCardProcessor to a singleton
-    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
-    // bind BillingService to a prototype
-    bind(BillingService).toType(new BillingServiceImpl());
-  }
-}
+	class ExampleModule extends Module {
+	  configure() {
+	    // bind CreditProcessor to a singleton
+	    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
+	    // bind BillingService to a prototype
+	    bind(BillingService).toType(new BillingServiceImpl());
+	  }
+	}
 ```
 
 **4.** Run it
