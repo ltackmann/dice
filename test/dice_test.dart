@@ -4,10 +4,11 @@
 
 library dice_test;
 
-import '../lib/dice.dart';
 import 'dart:async';
 import 'dart:mirrors';
+
 import 'package:unittest/unittest.dart';
+import 'package:dice/dice.dart';
 
 part 'test_module.dart';
 
@@ -61,9 +62,8 @@ main() {
   });
   
   group('internals -', () {
-    InjectorImpl injector = new InjectorImpl(new MyModule());
-    
-    ClassMirror classMirror = reflect(new MyClassToInject()).type;
+    var injector = new InjectorImpl(new MyModule());
+    var classMirror = reflect(new MyClassToInject()).type;
 
     test('new instance of MyClass', () {
       ClassMirror classMirror = reflect(new MyClass()).type;

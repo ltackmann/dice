@@ -19,7 +19,7 @@ class InjectorImpl implements Injector {
     _module.configure();
   }
   
-  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(_getClassMirrorForType(type));
+  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(reflectClass(type));
 
   Future<dynamic> getInstanceFromTypeMirror(TypeMirror type) {
     if(!_module._hasBindingFor(type)) {

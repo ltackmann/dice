@@ -9,19 +9,10 @@ class TypeMirrorWrapper {
   final TypeMirror typeMirror;
   
   TypeMirrorWrapper(this.typeMirror);
-  TypeMirrorWrapper.fromType(Type type) : typeMirror = _getClassMirrorForType(type);
+  TypeMirrorWrapper.fromType(Type type) : typeMirror = reflectClass(type);
   
   get hashCode => typeMirror.qualifiedName.hashCode;
   bool operator ==(TypeMirrorWrapper other) => typeMirror.qualifiedName == other.typeMirror.qualifiedName;
-}
-
-// Inspired from Dado
-ClassMirror _getClassMirrorForType(Type type) {
-  var name = new Symbol(type.toString());
-  return currentMirrorSystem().libraries.values
-      .where((lib) => lib.classes.containsKey(name))
-      .map((lib) => lib.classes[name])
-      .first;
 }
 
 // helpers
