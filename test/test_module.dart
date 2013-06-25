@@ -17,23 +17,34 @@ class MyModule extends Module {
 
 class MyClassToInject {
   MyClassToInject();
-  MyClassToInject.inject(this.$variableToInject);
-  MyClassToInject.notInject(this.$variableToInject, int other);
-  MyClassToInject.injectComplex(this.$variableToInject, MyClass $injectableParameter, {MyOtherClass $optionalInject});
+  MyClassToInject.inject(this.variableToInject);
+  MyClassToInject.notInject(this.variableToInject, int other);
+  MyClassToInject.injectComplex(this.variableToInject, @Inject MyClass injectableParameter, {MyOtherClass $optionalInject});
   
-  set setterParameterToInject(MyClass $setterParameterToInject) => injections["setterParameterToInject"] = $setterParameterToInject;
-  set _setterParameterToInject(MyClass $setterParameterToInject) => injections["_setterParameterToInject"] = $setterParameterToInject;
+  set setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["setterParameterToInject"] = setterParameterToInject;
+  set _setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["_setterParameterToInject"] = setterParameterToInject;
   
-  set $setterToInject(MyClass setterToInject) => injections[r"$setterToInject"] = setterToInject;
-  set _$setterToInject(MyClass setterToInject) => injections[r"_$setterToInject"] = setterToInject;
+  @Inject
+  set setterToInject(MyClass setterToInject) => injections["setterToInject"] = setterToInject;
+  @Inject
+  set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
  
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
   
   MyClass variableNotToInject;
   MyOtherClass _variableNotToInject;
-  MyClass $variableToInject;
-  MyOtherClass _$variableToInject;
+  
+  @Inject
+  MyClass variableToInject;
+  @Inject
+  MyOtherClass _variableToInject;
+  
+  @Inject(name:"MySpecialClass")
+  MyClass namedVariableToInject;
+  @Inject(name:"MySpecialClass")
+  MyClass _namedVariableToInject;
+  
   // Map to trace injections from setters or constructors
   Map injections = new Map();
 }
