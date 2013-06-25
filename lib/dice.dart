@@ -10,6 +10,7 @@ import 'dart:mirrors';
 
 import 'package:meta/meta.dart';
 
+part 'src/annotations.dart';
 part 'src/binder.dart';
 part 'src/injector.dart';
 part 'src/mirror_util.dart';

@@ -19,7 +19,7 @@ class MyClassToInject {
   MyClassToInject();
   MyClassToInject.inject(this.variableToInject);
   MyClassToInject.notInject(this.variableToInject, int other);
-  MyClassToInject.injectComplex(this.variableToInject, @Inject MyClass injectableParameter, {MyOtherClass $optionalInject});
+  MyClassToInject.injectComplex(this.variableToInject, @Inject MyClass injectableParameter, {@Inject MyOtherClass optionalInject});
   
   set setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["setterParameterToInject"] = setterParameterToInject;
   set _setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["_setterParameterToInject"] = setterParameterToInject;
@@ -40,9 +40,11 @@ class MyClassToInject {
   @Inject
   MyOtherClass _variableToInject;
   
-  @Inject(name:"MySpecialClass")
+  @Inject
+  @Named("MySpecialClass")
   MyClass namedVariableToInject;
-  @Inject(name:"MySpecialClass")
+  @Inject
+  @Named("MySpecialClass")
   MyClass _namedVariableToInject;
   
   // Map to trace injections from setters or constructors
