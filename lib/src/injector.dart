@@ -109,7 +109,7 @@ class InjectorImpl implements Injector {
       method.parameters.where(injectable);
 }
 
-/** Annotation to inject classes */
+/** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
 class Inject {
   const Inject({this.name:null});
   
