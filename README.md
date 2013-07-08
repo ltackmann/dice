@@ -19,7 +19,7 @@ Dice supports the following injection forms
    	}
 ```
   
- * Injection of constructors .
+ * Injection of constructors (if no constructor is annotated with **@Inject** then the default is used)
 ```dart 
 	class MyClass {
  		@Inject
@@ -27,7 +27,7 @@ Dice supports the following injection forms
  		
  		MyOtherClass field;
  	}
-```Note if no constructor is annotated with **@Inject** then the default constructor is used.
+```
  
  * Injection of public setters 
 ```dart
