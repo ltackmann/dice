@@ -9,11 +9,38 @@ Injection Types
 
 Dice supports the following injection forms
 
- * Fields starting with $ and _$ are injected
- * Setters starting $ are injected
- * Variables starting with $ and _$ are injected
+ * Injection of public and private fields (object/instance variables)
+```dart
+	class MyOtherClass {
+    	@Inject
+      	SomeClass field;
+      	@Inject
+      	SomeOtherClass _privateField;
+   	}
+```
+  
+ * Injection of constructors (if no constructor is marked with @Inject the default constructor is used).
+```dart 
+	class MyClass {
+ 		@Inject
+ 		MyClass(this.field);
+ 		
+ 		MyOtherClass field;
+ 	}
+```
  
-Injection of parameters is unsupported as Dart's mirror system cannot handle these yet.
+ * Injection of public setters 
+```dart
+	class MyOtherClass {
+      	@Inject
+      	SomeClass field;
+      	@Inject
+      	SomeOtherClass _privateField;
+	}
+```
+
+
+Named injections are not supported yet but we are working on fixing this.
 
 Quick Guide
 -----------
@@ -27,11 +54,11 @@ Quick Guide
 **2.** Create some classes and interfaces to inject
 ```dart
 	class BillingServiceImpl implements BillingService {
-	  // fields starting with $ and _$ gets injected
-	  CreditProcessor _$processor;
+	  @Inject
+	  CreditProcessor _processor;
 	  
 	  Receipt chargeOrder(Order order, CreditCard creditCard) {
-	    if(!_$processor.validate(creditCard)) {
+	    if(!_processor.validate(creditCard)) {
 	      throw new ArgumentError("payment method not accepted");
 	    }
 	    // :
@@ -46,7 +73,7 @@ Quick Guide
 	    // bind CreditProcessor to a singleton
 	    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
 	    // bind BillingService to a prototype
-	    bind(BillingService).toType(new BillingServiceImpl());
+	    bind(BillingService).toType(BillingServiceImpl);
 	  }
 	}
 ```
@@ -54,13 +81,12 @@ Quick Guide
 **4.** Run it
 ```dart
     import "package:dice/dice.dart";
-    main() {
-	  var injector = new Injector(new ExampleModule());
-	  injector.getInstance(BillingService).then((BillingService billing) {
-	    var creditCard = new CreditCard("VISA");
-	    var order = new Order("Dart: Up and Running");
-	    billing.chargeOrder(order, creditCard);
-	  });
+	main() {
+	  	var injector = new Injector(new ExampleModule());
+	  	var billingService = injector.getInstance(BillingService);
+	  	var creditCard = new CreditCard("VISA");
+	  	var order = new Order("Dart: Up and Running");
+	  	billingService.chargeOrder(order, creditCard);
 	}
 ```
 

@@ -8,104 +8,114 @@ part of dice;
 abstract class Injector {
   factory Injector(module) => new InjectorImpl(module);
   
-  Future<dynamic> getInstance(Type type);
+  dynamic getInstance(Type type);
 }
 
 /** Implementation of [Injector]. */
 class InjectorImpl implements Injector {
-  Module _module;
-
   InjectorImpl(this._module) {
     _module.configure();
   }
   
-  Future<dynamic> getInstance(Type type) => getInstanceFromTypeMirror(reflectClass(type));
-
-  Future<dynamic> getInstanceFromTypeMirror(TypeMirror type) {
-    if(!_module._hasBindingFor(type)) {
-      throw new ArgumentError("no instance registered for type $type");
+  // get obejct for type (either creates new instance or reuses existing depending on binding)
+  @override
+  dynamic getInstance(Type type) => _getInstanceFor(reflectClass(type));
+  
+  dynamic _getInstanceFor(TypeMirror tm) {
+    if(!_module._hasBindingFor(tm)) {
+      throw new ArgumentError("no instance registered for type ${symbolAsString(tm.simpleName)}");
     }
     
-    var binder = _module._getBindingFor(type);
-    // TODO use reflection to resolve sub dependencies when dart:mirrors support access to meta information
-    // TODO avoid circular references using a cache or injecting proxies
-    var instance = binder._builder();
-    instance = resolveInjections(instance);
-    return instance;
+    InstanceMirror im;
+    var binder = _module._getBindingFor(tm);
+    var obj = binder._builder(); 
+    if(obj is Type) {
+      im = _newInstance(tm);
+    } else {
+      im = reflect(obj);
+    }
+    return _resolveInjections(im);
   }
   
-  Future<dynamic> resolveInjections(dynamic instance) {
-    return (instance is ClassMirror ? newInstance(instance) : new Future.value(reflect(instance)))
-        .then(injectSetters)
-        .then(injectVariables)
-        .then((InstanceMirror instanceMirror) => instanceMirror.reflectee);
+  dynamic _resolveInjections(InstanceMirror im) {
+    im = _injectSetters(im);
+    im = _injectVariables(im);
+    return im.reflectee;
   }
   
-  Future<InstanceMirror> newInstance(ClassMirror classMirror) {
+  // create a new instance of classMirror and inject it
+  InstanceMirror _newInstance(ClassMirror classMirror) {
     // Look for an injectable constructor
-    var constructors = injectableConstructors(classMirror);
+    var constructors = injectableConstructors(classMirror).toList();
     // that has the greatest number of parameters to inject, optional included
     MethodMirror constructor = constructors.fold(null, (MethodMirror p, MethodMirror e) => 
-            p == null || injectableParameters(p).length < injectableParameters(e).length ? e : p);
-    // TODO String constructorName = constructor.simpleName.replaceFirst(classMirror.simpleName, "").replaceFirst(".", "");
-    var constructorName = constructor.simpleName;
+            p == null || _injectableParameters(p).length < _injectableParameters(e).length ? e : p);
+    var constructorArgs = constructor.parameters.map((pm) => _getInstanceFor(pm.type)).toList();  
     
-    // TODO parameters injection
-    return classMirror.newInstanceAsync(constructor.constructorName, []);
+    return classMirror.newInstance(constructor.constructorName, constructorArgs);
   }
   
-  Future<InstanceMirror> injectSetters(InstanceMirror instanceMirror) {
-      var setters = injectableSetters(instanceMirror.type);
-      // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = setters.map((MethodMirror setter) => 
-          getInstanceFromTypeMirror(firstParameter(setter))
-            // use the resolved injections as setter values
-            .then((instance) => instanceMirror.setFieldAsync(methodName(setter), reflect(instance)))); 
-      // setters.forEach((s) => instanceMirror.invoke(s.simpleName, [getInstance(s.returnType)])); 
-      return Future.wait(futures).then((_) => instanceMirror);
+  InstanceMirror _injectSetters(InstanceMirror instanceMirror) {
+    var setters = injectableSetters(instanceMirror.type);
+    setters.forEach((MethodMirror setter) { 
+      var instanceToInject = _getInstanceFor(_firstParameter(setter));
+      // set the resolved injection on the instance mirror we are injecting into
+      instanceMirror.setField(_methodName(setter), instanceToInject);
+    }); 
+    return instanceMirror;
   }
   
-  Future<InstanceMirror> injectVariables(InstanceMirror instanceMirror) {
-      var variables = injectableVariables(instanceMirror.type);
-      // FIXME We are not able to get Type from a TypeMirror yet
-      var futures = variables.map((VariableMirror variable) => 
-          getInstanceFromTypeMirror(variable.type)
-            // use the resolved injections as variable values
-            .then((instance) => instanceMirror.setFieldAsync(variable.simpleName, reflect(instance)))); 
-      return Future.wait(futures).then((_) => instanceMirror);
+  InstanceMirror _injectVariables(InstanceMirror instanceMirror) {
+    var variables = injectableVariables(instanceMirror.type);
+    variables.forEach((VariableMirror variable) { 
+      var instanceToInject = _getInstanceFor(variable.type);
+      // set the resolved injection on the instance mirror we are injecting into
+      instanceMirror.setField(variable.simpleName, instanceToInject); 
+    });
+    return instanceMirror;
   }
   
   /** Returns constructors that could be injected */
-  Iterable<MethodMirror> injectableConstructors(ClassMirror classMirror) =>
-      // All non optional parameters are injectable
-      classMirror.constructors.values.where((m) => m.parameters.where((p) => !p.isOptional).every(injectable));
+  Iterable<MethodMirror> injectableConstructors(ClassMirror classMirror) {
+    var constructors = classMirror.constructors.values.where(_injectable);
+    if(constructors.isEmpty) {
+      // use the default constructor if no excplit injectable exists 
+      constructors = classMirror.constructors.values.where((MethodMirror m) => m.parameters.isEmpty);
+      if(constructors.isEmpty) {
+        throw new StateError("no injectable constructors exists for ${classMirror}");
+      }
+    }
+    return constructors;
+  }
 
   /** Returns setters that need injection */
   Iterable<MethodMirror> injectableSetters(ClassMirror classMirror) => 
       // TODO figure out how to inject into private setters
-      classMirror.setters.values.where((m) => injectable(m) || m.parameters.every(injectable)).where((s) => !s.isPrivate);
+      classMirror.setters.values.where(_injectable);
 
   /** Returns variables that need injection */
   Iterable<VariableMirror> injectableVariables(ClassMirror classMirror) => 
-      classMirror.variables.values.where(injectable);
+      classMirror.variables.values.where(_injectable);
 
   /** Returns true if the declared [element] is injectable */
-  bool injectable(DeclarationMirror element) => 
-      symbolAsString(element.simpleName).startsWith(r'$') || symbolAsString(element.simpleName).startsWith(r'_$');
+  bool _injectable(DeclarationMirror element) => 
+      element.metadata.any((InstanceMirror im) => im.reflectee is _Inject);
   
   /** Returns method name from [MethodMirror] */
-  Symbol methodName(MethodMirror method) {
+  Symbol _methodName(MethodMirror method) {
     var name = symbolAsString(method.simpleName);
     var symbolName = name.substring(0, name.length - 1);
     return stringAsSymbol(symbolName);
   }
   
   /** Returns [TypeMirror] for first parameter in method */
-  TypeMirror firstParameter(MethodMirror method) => 
+  TypeMirror _firstParameter(MethodMirror method) => 
       method.parameters[0].type;
   
-  /** Returns parameters (including optional) that need injection */
-  Iterable<ParameterMirror> injectableParameters(MethodMirror method) => 
-      method.parameters.where(injectable);
+  /** Returns parameters (including optional) that can be injected */
+  Iterable<ParameterMirror> _injectableParameters(MethodMirror method) => 
+      method.parameters.where((pm) => _module._hasBindingFor(pm.type));
+  
+  final Module _module;
 }
 

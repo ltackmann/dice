@@ -8,41 +8,46 @@ class MyModule extends Module {
   configure() {
     bind(MyClass).toInstance(new MyClass());
     bind(MyOtherClass).toBuilder(() => new MyOtherClass());
-    bind(MyFunction).toFunction(_myFunction);
-    bind(MyClassToInject).toType(new MyClassToInject());
+    // TODO bind(MyFunction).toFunction(_myFunction);
+    bind(MyClassToInject).toType(MyClassToInject);
   }
   
   String _myFunction() => "MyFunction";
 }
 
 class MyClassToInject {
-  MyClassToInject();
-  MyClassToInject.inject(this.variableToInject);
-  MyClassToInject.notInject(this.variableToInject, int other);
-  MyClassToInject.injectComplex(this.variableToInject, @Inject MyClass injectableParameter, {@Inject MyOtherClass optionalInject});
+  // constructors
+  @Inject
+  MyClassToInject.inject(MyClass constructorParameterToInject) {
+    injections["constructorParameterToInject"] = constructorParameterToInject;
+  }
   
-  set setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["setterParameterToInject"] = setterParameterToInject;
-  set _setterParameterToInject(@Inject MyClass setterParameterToInject) => injections["_setterParameterToInject"] = setterParameterToInject;
-  
+  // setters
   @Inject
   set setterToInject(MyClass setterToInject) => injections["setterToInject"] = setterToInject;
-  @Inject
-  set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
+  
+  //@Inject
+  //set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
  
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
+  
+  // TODO named setter injection
+  
+  // instance variables
+  @Inject
+  MyClass variableToInject;
+  
+  @Inject
+  MyOtherClass _variableToInject;
   
   MyClass variableNotToInject;
   MyOtherClass _variableNotToInject;
   
   @Inject
-  MyClass variableToInject;
-  @Inject
-  MyOtherClass _variableToInject;
-  
-  @Inject
   @Named("MySpecialClass")
   MyClass namedVariableToInject;
+  
   @Inject
   @Named("MySpecialClass")
   MyClass _namedVariableToInject;
@@ -57,6 +62,10 @@ class MyClass {
 
 class MyOtherClass {
   String getName() => "MyOtherClass";
+}
+
+class MySpecialClass implements MyClass {
+  String getName() => "MySpecialClass";
 }
 
 typedef String MyFunction();

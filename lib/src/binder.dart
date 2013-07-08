@@ -29,8 +29,7 @@ class Binder {
   
   /** Bind to a [type] that will be instantiated when the type is requested */
   toType(var type) {
-    var mirror = reflect(type).type;
-    _builder = () => mirror;
+    _builder = () => Type;
   }
   
   bool _isClass(var instance) => reflect(instance).type is! FunctionTypeMirror;

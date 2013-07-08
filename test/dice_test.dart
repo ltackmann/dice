@@ -13,89 +13,76 @@ import 'package:dice/dice.dart';
 part 'test_module.dart';
 
 main() {
-  group('injector injection -', () {
+  group('injection -', () {
     var injector = new Injector(new MyModule());
     
     test('singleton', () {
-      var futures = [injector.getInstance(MyClass), injector.getInstance(MyClass)]; 
-      Future.wait(futures).then(expectAsync1((List<MyClass> instances) {
-        expect(instances, everyElement(isNotNull));
-        expect(instances.first.getName(), equals('MyClass'));
-        expect(identical(instances[0], instances[1]), isTrue, reason:'must be singleton');
-      }));
+      var instances = [injector.getInstance(MyClass), injector.getInstance(MyClass)]; 
+      expect(instances, everyElement(isNotNull));
+      expect(instances.first.getName(), equals('MyClass'));
+      expect(identical(instances[0], instances[1]), isTrue, reason:'must be singleton');
     });
     
     test('instance', () {
-      var futures = [injector.getInstance(MyOtherClass), injector.getInstance(MyOtherClass)]; 
-      Future.wait(futures).then(expectAsync1((List<MyOtherClass> instances) {
-        expect(instances, everyElement(isNotNull));
-        expect(instances, everyElement(predicate((e) => e.getName() == 'MyOtherClass', '')));
-        expect(identical(instances[0], instances[1]), isFalse, reason:'must be new instances');
-      }));
+      var instances = [injector.getInstance(MyOtherClass), injector.getInstance(MyOtherClass)]; 
+      expect(instances, everyElement(isNotNull));
+      expect(instances, everyElement(predicate((e) => e.getName() == 'MyOtherClass', '')));
+      expect(identical(instances[0], instances[1]), isFalse, reason:'must be new instances');
     });
     
-    test('function', () {
-      injector.getInstance(MyFunction).then(expectAsync1((func) {
-        expect(func, isNotNull);
-        expect(func(), equals('MyFunction'));
-      }));
+    skip_test('function', () {
+      var func = injector.getInstance(MyFunction);
+      expect(func, isNotNull);
+      expect(func(), equals('MyFunction'));
     });
     
     test('type', () {
-      injector.getInstance(MyClassToInject).then(expectAsync1((MyClassToInject instance) {
-        expect(instance, isNotNull);
-        expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
-        expect(instance.$variableToInject, isNotNull);
-        // TODO expect(instance._$variableToInject, isNotNull);
-        expect(instance.injections[r'$setterToInject'], isNotNull);
-        // TODO expect(instance.injections[r'_$setterToInject'], isNotNull);
-        // FIXME: Until parameters names are supported (returns TODO:unnamed)
-        // expect(instance.injections['setterToInject'], isNotNull);
-        // expect(instance.injections['_setterToInject'], isNotNull);
-      }));
+      var instance = injector.getInstance(MyClassToInject);
+      expect(instance, isNotNull);
+      expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
+      // variables
+      expect(instance.variableToInject, isNotNull);
+      // TODO expect(instance._$variableToInject, isNotNull);
+      // setters
+      expect(instance.injections[r'setterToInject'], isNotNull);
+      // TODO expect(instance.injections[r'_$setterToInject'], isNotNull);
+      // FIXME: Until parameters names are supported (returns TODO:unnamed)
+      // expect(instance.injections['setterToInject'], isNotNull);
+      // expect(instance.injections['_setterToInject'], isNotNull);
     });
     
-  });
-  
-  group('annotation injection', () {
-    // TODO test annotations
+    test('named injections', () {
+      // THROW error on injection if multiple instances is registered and @Named is not used
+    });
   });
   
   group('internals -', () {
     var injector = new InjectorImpl(new MyModule());
-    var classMirror = reflect(new MyClassToInject()).type;
+    var classMirror = reflectClass(MyClassToInject);
 
     test('new instance of MyClass', () {
-      ClassMirror classMirror = reflect(new MyClass()).type;
-      injector.newInstance(classMirror).then(expectAsync1((InstanceMirror instance) {
-        expect(instance, isNotNull);
-        expect(instance.reflectee, isNotNull);
-        expect(instance.reflectee, new isInstanceOf<MyClass>('MyClass'));
-      }));
+      var instance = injector.getInstance(MyClass);
+      expect(instance, isNotNull);
+      expect(instance, new isInstanceOf<MyClass>('MyClass'));
     });
 
     test('new instance of MyClassToInject', () {
-      ClassMirror classMirror = reflect(new MyClassToInject()).type;
-      injector.newInstance(classMirror).then(expectAsync1((InstanceMirror instance) {
-        expect(instance, isNotNull);
-        expect(instance.reflectee, isNotNull);
-        expect(instance.reflectee, new isInstanceOf<MyClassToInject>('MyClassToInject'));
-      }));
+      var instance = injector.getInstance(MyClassToInject);
+      expect(instance, isNotNull);
+      expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
     });
     
     test('constructors', () {
-      Iterable<MethodMirror> constructors = injector.injectableConstructors(classMirror).toList().map((c) => symbolAsString(c.simpleName));
-      Iterable<MethodMirror> expected = ['MyClassToInject'];
-      // FIXME: should be this but parameters names are not supported yet (returns TODO:unnamed)
-      // Iterable<MethodMirror> expected = [c['MyClassToInject'], c['MyClassToInject.inject'], c['MyClassToInject.injectComplex']];
+      var constructors = injector.injectableConstructors(classMirror).toList().map((c) => symbolAsString(c.simpleName));
+      var expected = ['MyClassToInject.inject'];
       
       expect(constructors, unorderedEquals(expected));
     });
     
     test('setters', () {
-      Iterable<MethodMirror> setters = injector.injectableSetters(classMirror).toList().map((s) => symbolAsString(s.simpleName));
-      Iterable<MethodMirror> expected = [r'$setterToInject='];
-      // TODO , r'_$setterToInject='
+      var setters = injector.injectableSetters(classMirror).toList().map((s) => symbolAsString(s.simpleName));
+      var expected = ['setterToInject='];
+      // TODO , '_setterToInject='
       // FIXME: should be this but parameters names are not supported yet (returns TODO:unnamed)
       // Iterable<MethodMirror> expected = [s['setterToInject='], s['_setterToInject='], s[r'$setterToInject='], s[r'_$setterToInject=']];
       
@@ -103,11 +90,12 @@ main() {
     });
     
     test('variables', () {
-      Iterable<VariableMirror> variables = injector.injectableVariables(classMirror).toList().map((v) => symbolAsString(v.simpleName));
-      Iterable<VariableMirror> expected = [r'$variableToInject', r'_$variableToInject'];
+      var variables = injector.injectableVariables(classMirror).toList().map((v) => symbolAsString(v.simpleName));
+      var expected = ['variableToInject', '_variableToInject', 'namedVariableToInject', '_namedVariableToInject'];
       expect(variables, unorderedEquals(expected));
     });
   });
 }
+
 
 

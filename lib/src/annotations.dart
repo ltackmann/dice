@@ -5,8 +5,9 @@
 part of dice;
 
 /** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
-class Inject {
-  const Inject();
+const Inject = const _Inject();
+class _Inject {
+  const _Inject();
 }
 
 /** Used in conjunction with [Inject] to select a specific named target for injection */
