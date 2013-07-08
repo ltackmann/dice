@@ -19,7 +19,7 @@ Dice supports the following injection forms
    	}
 ```
   
- * Injection of constructors (if no constructor is marked with @Inject the default constructor is used).
+ * Injection of constructors (if no constructor is annotated with **@Inject** then the default constructor is used).
 ```dart 
 	class MyClass {
  		@Inject

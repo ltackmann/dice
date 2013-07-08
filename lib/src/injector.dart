@@ -30,7 +30,7 @@ class InjectorImpl implements Injector {
     var binder = _module._getBindingFor(tm);
     var obj = binder._builder(); 
     if(obj is Type) {
-      im = _newInstance(tm);
+      im = _newInstance(reflectClass(obj));
     } else {
       im = reflect(obj);
     }

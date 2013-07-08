@@ -5,11 +5,11 @@
 part of dice_example;
 
 class BillingServiceImpl implements BillingService {
-  // fields starting with $ and _$ gets injected
-  CreditProcessor _$processor;
+  @Inject
+  CreditProcessor _processor;
   
   Receipt chargeOrder(Order order, CreditCard creditCard) {
-    if(!(_$processor.validate(creditCard))) {
+    if(!(_processor.validate(creditCard))) {
       throw new ArgumentError("payment method not accepted");
     }
     // :
