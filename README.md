@@ -15,7 +15,7 @@ Lightweight dependency injection framework for Dart.
 **2.** Create some classes and interfaces to inject
 ```dart
 	class BillingServiceImpl implements BillingService {
-	  @Inject
+	  @inject
 	  CreditProcessor _processor;
 	  
 	  Receipt chargeOrder(Order order, CreditCard creditCard) {
@@ -94,19 +94,13 @@ You can use the **@inject** annotation to mark values for injection the followin
 	}
 ```
 
-The actual values injected are configured by extending **Module** class and using one its binder functions
+The actual values injected are configured by extending the **Module** class and using one its binder functions
 
  * ```bind(MyType).toInstace(object)``` bind type **MyType** to existing object (singleton injections)
  * ```bind(MyType).toType(MyType)``` bind type **MyType** to an (possible alternative) class implementing it.
  * ```bind(MyTypedef).toFunction(function)``` bind a **typedef** to a function matching it.
  * ```bind(MyType).toBuilder(() => new MyType())``` bind **MyType** to function that can build instances of it 
 
-Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
-
-```dart
-   MyClass instance = injector.getInstance(MyClass);
-
-```
 
 Named Injections
 ----------------
@@ -128,16 +122,21 @@ The configuration is as before except you now use method **namedBind** inside yo
  * ```namedBind(MyTypedef, "my-name").toFunction(function)``` 
  * ```namedBind(MyType, "my-name").toBuilder(() => new MyType())```
  
-Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
 
+Tips and Tricks
+---------------
+**Tip 1.** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
+```dart
+   MyClass instance = injector.getInstance(MyClass);
+
+```
+
+**Tip 2.** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
-Tips and Tricks
----------------
-You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
-
+**Tip 3.** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
@@ -148,6 +147,8 @@ You can use named bindings to create a simple yet effective way of injecting con
 	// application code
 	String get webServiceHost => injector.getNamedInstance(String, "web-service-host");
 ``` 
+
+
  
  
  
