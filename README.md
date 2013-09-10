@@ -4,11 +4,6 @@ Dice
 ====
 Lightweight dependency injection framework for Dart.
 
-Dice is a simple dependency injection framework. In dice you create **Module** instance and bind types/classes to
-instances. You then pass the this module to an **Injector** which looks for **@inject** annotations and resolves 
-them to the values bound in your module. 
-
-
 # Quick Guide
 -----------
 **1.** Add the folowing to your **pubspec.yaml** and run **pub install**
@@ -60,7 +55,11 @@ for more information see the full example [here](example/example_app.dart).
 
 Dependency Injection with Dice 
 ------------------------------
-In Dice you can use the **@inject** annotation to mark values for injection in the following way:
+Dice is configured by creating **Module** instances that acts as factories to bind your classes to instances. 
+You then pass the this module to an **Injector** which looks for **@inject** annotations and resolves 
+them to the values bound in your module. 
+
+You can use the **@inject** annotation to mark values for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
@@ -97,10 +96,10 @@ In Dice you can use the **@inject** annotation to mark values for injection in t
 
 The actual values injected are configured by extending **Module** class and using one its binder functions
 
- * ```bind(MyType).toInstace(object)``` bind type **MyType** to existing object (this effectivly gives you singleton injections)
+ * ```bind(MyType).toInstace(object)``` bind type **MyType** to existing object (singleton injections)
  * ```bind(MyType).toType(MyType)``` bind type **MyType** to an (possible alternative) class implementing it.
  * ```bind(MyTypedef).toFunction(function)``` bind a **typedef** to a function matching it.
- * ```bind(MyType).toBuilder(() => new MyType())``` bind **MyType** to a function that when executed returns a instance of it 
+ * ```bind(MyType).toBuilder(() => new MyType())``` bind **MyType** to function that can build instances of it 
 
 Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
 
@@ -133,7 +132,6 @@ Instead of using the **@Named** annotation to resolve named injections you can u
 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
-
 ```
 
 Tips and Tricks
@@ -148,7 +146,7 @@ You can use named bindings to create a simple yet effective way of injecting con
 	}
 	
 	// application code
-	String get webServiceHost => injector.getNamedInstance("web-service-host", String);
+	String get webServiceHost => injector.getNamedInstance(String, "web-service-host");
 ``` 
  
  
