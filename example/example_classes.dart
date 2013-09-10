@@ -5,7 +5,7 @@
 part of dice_example;
 
 class BillingServiceImpl implements BillingService {
-  @Inject
+  @inject
   CreditProcessor _processor;
   
   Receipt chargeOrder(Order order, CreditCard creditCard) {
