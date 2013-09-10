@@ -8,7 +8,14 @@ part of dice;
 abstract class Injector {
   factory Injector(module) => new InjectorImpl(module);
   
+  /** Get new instance of [type] with all dependencies resolved */
   dynamic getInstance(Type type);
+  
+  /** Resolve injetions in existing Object (does not create a new instance) */
+  Object resolveInjections(Object obj);
+  
+  /** Get the module used to configure this injector */
+  Module get module;
 }
 
 /** Implementation of [Injector]. */
@@ -17,9 +24,20 @@ class InjectorImpl implements Injector {
     _module.configure();
   }
   
-  // get obejct for type (either creates new instance or reuses existing depending on binding)
   @override
-  dynamic getInstance(Type type) => _getInstanceFor(reflectClass(type));
+  dynamic getInstance(Type type) {
+    var typeMirror = reflectClass(type);
+    return _getInstanceFor(typeMirror);
+  }
+  
+  @override
+  Object resolveInjections(Object obj) {
+    var instanceMirror = reflect(obj);
+    return _resolveInjections(instanceMirror);
+  }
+  
+  @override
+  Module get module => _module;
   
   dynamic _getInstanceFor(TypeMirror tm) {
     if(!_module._hasBindingFor(tm)) {
@@ -99,7 +117,7 @@ class InjectorImpl implements Injector {
 
   /** Returns true if the declared [element] is injectable */
   bool _injectable(DeclarationMirror element) => 
-      element.metadata.any((InstanceMirror im) => im.reflectee is _Inject);
+      element.metadata.any((InstanceMirror im) => im.reflectee is Inject);
   
   /** Returns method name from [MethodMirror] */
   Symbol _methodName(MethodMirror method) {

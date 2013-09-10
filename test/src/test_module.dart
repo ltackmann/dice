@@ -17,17 +17,17 @@ class MyModule extends Module {
 
 class MyClassToInject {
   // constructors
-  @Inject
+  @inject
   MyClassToInject.inject(MyClass constructorParameterToInject) {
     injections["constructorParameterToInject"] = constructorParameterToInject;
   }
   
   // setters
-  @Inject
+  @inject
   set setterToInject(MyClass setterToInject) => injections["setterToInject"] = setterToInject;
   
-  //@Inject
-  //set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
+  @inject
+  set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
  
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
@@ -35,25 +35,42 @@ class MyClassToInject {
   // TODO named setter injection
   
   // instance variables
-  @Inject
+  @inject
   MyClass variableToInject;
   
-  @Inject
+  @inject
   MyOtherClass _variableToInject;
   
   MyClass variableNotToInject;
   MyOtherClass _variableNotToInject;
   
-  @Inject
+  @inject
   @Named("MySpecialClass")
   MyClass namedVariableToInject;
   
-  @Inject
+  @inject
   @Named("MySpecialClass")
   MyClass _namedVariableToInject;
   
   // Map to trace injections from setters or constructors
   Map injections = new Map();
+  
+  bool assertInjections() {
+    var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
+    
+    // variables
+    var variablesToInject = (variableToInject != null && _variableToInject != null);
+    var variablesNotToInject = (variableNotToInject == null && _variableNotToInject == null);
+    var variablesInjected = variablesToInject && variablesNotToInject;
+    
+    // setters
+    var settersToInject = (injections[r'setterToInject'] != null && injections[r'_setterToInject'] != null);
+    var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
+    var settersInjected = settersToInject && settersNotToInject;
+    
+    return constructorsInjected && variablesInjected && settersInjected;
+  }
+  
 }
 
 class MyClass {

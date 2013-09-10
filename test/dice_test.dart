@@ -4,51 +4,58 @@
 
 library dice_test;
 
-import 'dart:async';
 import 'dart:mirrors';
 
 import 'package:unittest/unittest.dart';
 import 'package:dice/dice.dart';
 
-part 'test_module.dart';
+part 'src/test_module.dart';
 
 main() {
-  group('injection -', () {
-    var injector = new Injector(new MyModule());
+  group('injector -', () {
+    final module = new MyModule();
+    var injector = new Injector(module);
     
-    test('singleton', () {
+    test('inject singleton', () {
       var instances = [injector.getInstance(MyClass), injector.getInstance(MyClass)]; 
       expect(instances, everyElement(isNotNull));
       expect(instances.first.getName(), equals('MyClass'));
       expect(identical(instances[0], instances[1]), isTrue, reason:'must be singleton');
     });
     
-    test('instance', () {
+    test('inject instance', () {
       var instances = [injector.getInstance(MyOtherClass), injector.getInstance(MyOtherClass)]; 
       expect(instances, everyElement(isNotNull));
       expect(instances, everyElement(predicate((e) => e.getName() == 'MyOtherClass', '')));
       expect(identical(instances[0], instances[1]), isFalse, reason:'must be new instances');
     });
     
-    skip_test('function', () {
+    skip_test('inject function', () {
       var func = injector.getInstance(MyFunction);
       expect(func, isNotNull);
       expect(func(), equals('MyFunction'));
     });
     
-    test('type', () {
+    test('getInstance', () {
       var instance = injector.getInstance(MyClassToInject);
       expect(instance, isNotNull);
       expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
-      // variables
-      expect(instance.variableToInject, isNotNull);
-      // TODO expect(instance._$variableToInject, isNotNull);
-      // setters
-      expect(instance.injections[r'setterToInject'], isNotNull);
-      // TODO expect(instance.injections[r'_$setterToInject'], isNotNull);
-      // FIXME: Until parameters names are supported (returns TODO:unnamed)
-      // expect(instance.injections['setterToInject'], isNotNull);
-      // expect(instance.injections['_setterToInject'], isNotNull);
+      expect((instance as MyClassToInject).assertInjections(), isTrue);
+    });
+    
+    test('resolveInjections', () {
+      var instance = new MyClassToInject.inject(new MyClass());
+      expect((instance as MyClassToInject).assertInjections(), isFalse);
+      var resolvedInstance = injector.resolveInjections(instance);
+      
+      expect((resolvedInstance as MyClassToInject).assertInjections(), isTrue);
+      expect(identical(resolvedInstance, instance), isTrue);
+    });
+    
+    test('get module', () {
+      var moduleUsed = injector.module;
+      expect(moduleUsed, isNotNull);
+      expect(identical(moduleUsed, module), isTrue);
     });
     
     test('named injections', () {
@@ -81,10 +88,7 @@ main() {
     
     test('setters', () {
       var setters = injector.injectableSetters(classMirror).toList().map((s) => symbolAsString(s.simpleName));
-      var expected = ['setterToInject='];
-      // TODO , '_setterToInject='
-      // FIXME: should be this but parameters names are not supported yet (returns TODO:unnamed)
-      // Iterable<MethodMirror> expected = [s['setterToInject='], s['_setterToInject='], s[r'$setterToInject='], s[r'_$setterToInject=']];
+      var expected = ['setterToInject=', '_setterToInject='];
       
       expect(setters, unorderedEquals(expected));
     });

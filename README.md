@@ -4,38 +4,45 @@ Dice
 ====
 Lightweight dependency injection framework for Dart.
 
-Injection Types
----------------
+Dice is a simple dependency injection framework. In dice you create **Module** instance and bind types/classes to
+instances. You then pass the this module to an **Injector** which looks for **@inject** annotations and resolves 
+them to the values bound in your module. 
 
-Dice supports the following injection forms
+Dependency Injection 
+--------------------
+
+In Dice you can use the **@inject** annotation to mark values for injection in the following way:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
 	class MyOtherClass {
-    	@Inject
+    	@inject
       	SomeClass field;
-      	@Inject
+      	@inject
       	SomeOtherClass _privateField;
    	}
 ```
   
- * Injection of constructors (if no constructor is annotated with **@Inject** then the default is used)
+ * Injection of constructor parameters 
 ```dart 
 	class MyClass {
- 		@Inject
+ 		@inject
  		MyClass(this.field);
  		
  		MyOtherClass field;
  	}
 ```
  
- * Injection of public setters 
+ * Injection of public and private setters 
 ```dart
 	class SomeClass {
-      	@Inject
-      	set value(SomeOtherClass val) => _privateVal = val;
+      	@inject
+      	set value(SomeOtherClass val) => _privateValue = val;
+      	
+      	@inject
+      	set _value(SomeOtherClass val) => _anotherPrivateValue = val;
 
-      	SomeOtherClass _privateVal;
+      	SomeOtherClass _privateValue, _anotherPrivateValue;
 	}
 ```
 
