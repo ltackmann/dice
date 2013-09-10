@@ -6,22 +6,23 @@ part of dice;
 
 /** Associates types with their concrete instances returned by the [Injector] */
 abstract class Module {
-  /** Bind a type implementation to this [Module] */
-  Binder bind(Type type) {
-    // TODO what happens if type is already bound ? (check guice)
+  /** Bind [type] to an implementation */
+  Binder bind(Type type) => namedBind(type, null);
+  
+  /** Bind [name] [type] to an implementation */
+  Binder namedBind(Type type, String name) {
     var binder = new Binder();
-    _bindings[new TypeMirrorWrapper.fromType(type)] = binder;
+    var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
+    _bindings[typeMirrorWrapper] = binder;
     return binder;
   }
   
   /** Configure type/instace bindings used in this module */
   configure();
   
-  bool _hasBindingFor(TypeMirror type) => _bindings.containsKey(new TypeMirrorWrapper(type));
+  bool _hasBindingFor(TypeMirror type, String name) => _bindings.containsKey(new TypeMirrorWrapper(type, name));
   
-  Binder _getBindingFor(TypeMirror type) => _bindings[new TypeMirrorWrapper(type)];
+  Binder _getBindingFor(TypeMirror type, String name) => _bindings[new TypeMirrorWrapper(type, name)];
   
   final Map<TypeMirrorWrapper, Binder> _bindings = new Map<TypeMirrorWrapper, Binder>();
 }
-
-

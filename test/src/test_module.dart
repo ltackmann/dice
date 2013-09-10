@@ -8,11 +8,11 @@ class MyModule extends Module {
   configure() {
     bind(MyClass).toInstance(new MyClass());
     bind(MyOtherClass).toBuilder(() => new MyOtherClass());
-    // TODO bind(MyFunction).toFunction(_myFunction);
     bind(MyClassToInject).toType(MyClassToInject);
+    
+    // named
+    namedBind(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
-  
-  String _myFunction() => "MyFunction";
 }
 
 class MyClassToInject {
@@ -56,6 +56,7 @@ class MyClassToInject {
   Map injections = new Map();
   
   bool assertInjections() {
+    // constructors
     var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
     
     // variables
@@ -68,9 +69,9 @@ class MyClassToInject {
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
     
+    // named
     return constructorsInjected && variablesInjected && settersInjected;
   }
-  
 }
 
 class MyClass {

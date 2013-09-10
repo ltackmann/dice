@@ -4,12 +4,12 @@
 
 part of dice;
 
-/** Collects configuration information (primarily bindings) which will be used to create an [Injector]. */
+/** Holds binding between a [Type] and its instane. */
 class Binder {
   /** Bind to a object [instance] that will be returned when the type is requested */
   toInstance(var instance) {
     if(!_isClass(instance)) {
-      throw new ArgumentError("only objects can be bound using toInstance");
+      throw new ArgumentError("only objects can be bound using 'toInstance'");
     }
     _builder = () => instance;
   }
@@ -17,7 +17,7 @@ class Binder {
   /** Bind to a [function] that will be returned when the type is requested */
   toFunction(var function) {
     if(_isClass(function)) {
-      throw new ArgumentError("only functions can be bound using toFunction");
+      throw new ArgumentError("only functions can be bound using 'toFunction'");
     }
     _builder = () => function;
   }

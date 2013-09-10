@@ -59,7 +59,12 @@ main() {
     });
     
     test('named injections', () {
-      // THROW error on injection if multiple instances is registered and @Named is not used
+      var myClass = injector.getInstance(MyClass);
+      var mySpecialClass = injector.getNamedInstance(MyClass, "MySpecialClass");
+      expect(myClass is MyClass, isTrue);
+      expect(myClass is! MySpecialClass, isTrue);
+      expect(mySpecialClass is MyClass, isTrue);
+      expect(mySpecialClass is MySpecialClass, isTrue);
     });
   });
   

@@ -4,15 +4,20 @@
 
 part of dice;
 
-/** Implements hashcode / equals for a TypeMirror. */
+/** Wrapper for [TypeMirror] to support multiple named bindings for the same [Type] */
 class TypeMirrorWrapper {
   final TypeMirror typeMirror;
+  final String name;
   
-  TypeMirrorWrapper(this.typeMirror);
-  TypeMirrorWrapper.fromType(Type type) : typeMirror = reflectClass(type);
+  TypeMirrorWrapper(this.typeMirror, this.name);
   
-  get hashCode => typeMirror.qualifiedName.hashCode;
-  bool operator ==(TypeMirrorWrapper other) => typeMirror.qualifiedName == other.typeMirror.qualifiedName;
+  TypeMirrorWrapper.fromType(Type type, this.name) : typeMirror = reflectClass(type);
+  
+  String get qualifiedName => symbolAsString(typeMirror.qualifiedName) + (name != null ? name : "");
+  
+  get hashCode => qualifiedName.hashCode;
+  
+  bool operator ==(TypeMirrorWrapper other) => this.qualifiedName == other.qualifiedName;
 }
 
 // helpers
