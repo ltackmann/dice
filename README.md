@@ -6,6 +6,10 @@ Lightweight dependency injection framework for Dart.
 
 # Quick Guide
 -----------
+Dice is configured by creating a **Module** instance that acts as factory binding your classes to instances. 
+Modules are passed to an **Injector** which looks for **@inject** annotations and resolves them to instances 
+bound in your module. It's really quite simple:
+
 **1.** Add the folowing to your **pubspec.yaml** and run **pub install**
 ```yaml
     dependencies:
@@ -55,10 +59,6 @@ for more information see the full example [here](example/example_app.dart).
 
 Dependency Injection with Dice 
 ------------------------------
-Dice is configured by creating **Module** instances that acts as factories to bind your classes to instances. 
-You then pass the this module to an **Injector** which looks for **@inject** annotations and resolves 
-them to the values bound in your module. 
-
 You can use the **@inject** annotation to mark values for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
