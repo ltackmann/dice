@@ -15,6 +15,12 @@ class MyModule extends Module {
   }
 }
 
+class YourModule extends Module {
+  configure() {
+    bind(YourClass).toType(YourClass);
+  }
+}
+
 class MyClassToInject {
   // constructors
   @inject
@@ -84,6 +90,10 @@ class MyOtherClass {
 
 class MySpecialClass implements MyClass {
   String getName() => "MySpecialClass";
+}
+
+class YourClass {
+  String getName() => "YourClass";
 }
 
 typedef String MyFunction();

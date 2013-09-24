@@ -13,9 +13,10 @@ part 'src/test_module.dart';
 
 main() {
   group('injector -', () {
-    final module = new MyModule();
-    var injector = new Injector(module);
-    
+    final myModule = new MyModule();
+    final yourModule = new YourModule();
+    var injector = new Injector(myModule);
+
     test('inject singleton', () {
       var instances = [injector.getInstance(MyClass), injector.getInstance(MyClass)]; 
       expect(instances, everyElement(isNotNull));
@@ -55,7 +56,7 @@ main() {
     test('get module', () {
       var moduleUsed = injector.module;
       expect(moduleUsed, isNotNull);
-      expect(identical(moduleUsed, module), isTrue);
+      expect(identical(moduleUsed, myModule), isTrue);
     });
     
     test('named injections', () {
@@ -65,6 +66,17 @@ main() {
       expect(myClass is! MySpecialClass, isTrue);
       expect(mySpecialClass is MyClass, isTrue);
       expect(mySpecialClass is MySpecialClass, isTrue);
+    });
+
+    test('module container', () {
+      var moduleContainer = new ModuleContainer([myModule, yourModule]);
+      var injector = new Injector(moduleContainer);
+
+      var myClass = injector.getInstance(MyClass);
+      var yourClass = injector.getInstance(YourClass);
+
+      expect(myClass is MyClass, isTrue);
+      expect(yourClass is YourClass, isTrue);
     });
   });
   
