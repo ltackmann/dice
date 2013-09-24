@@ -7,7 +7,8 @@ part of dice;
 /** Resolve types to their implementing classes */
 abstract class Injector {
   factory Injector(module) => new InjectorImpl(module);
-  
+  factory Injector.fromModules(modules) => new InjectorImpl(new ModuleContainer(modules));
+
   /** Get new instance of [type] with dependencies resolved */
   dynamic getInstance(Type type);
   

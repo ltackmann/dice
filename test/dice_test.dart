@@ -69,8 +69,7 @@ main() {
     });
 
     test('module container', () {
-      var moduleContainer = new ModuleContainer([myModule, yourModule]);
-      var injector = new Injector(moduleContainer);
+      var injector = new Injector.fromModules([myModule, yourModule]);
 
       var myClass = injector.getInstance(MyClass);
       var yourClass = injector.getInstance(YourClass);
