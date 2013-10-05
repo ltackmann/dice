@@ -119,18 +119,18 @@ The configuration is as before except you now use method **namedBind** inside yo
  * ```namedBind(MyType, "my-name").toBuilder(() => new MyType())```
  
 
-## Tips and Tricks
-**Get instances directly:** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
+## Advanced Features
+ * **Get instances directly** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
 ```dart
    MyClass instance = injector.getInstance(MyClass);
 ```
 
-**Get named instances directly:** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
+ * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
-**Binding configuration values:** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
+ * **Binding configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
@@ -142,14 +142,14 @@ The configuration is as before except you now use method **namedBind** inside yo
 	String get webServiceHost => injector.getNamedInstance(String, "web-service-host");
 ``` 
 
-**Registrering dependencies at runtime:** You can register dependencies at runtime by accessing the **module** property on the **Injector** instance.
+ * **Registrering dependencies at runtime** You can register dependencies at runtime by accessing the **module** property on the **Injector** instance.
 ```dart
 	 injector.module.bind(User).toInstance(user);
 	 :
 	 var user = injector.getInstance(User);
 ``` 
 
-**Using multiple modules:** You can compose mudules using the **Injector.fromModules** constructor
+ * **Using multiple modules** You can compose mudules using the **Injector.fromModules** constructor
 ```dart
 	class MyModule extends Module {
     	configure() {
