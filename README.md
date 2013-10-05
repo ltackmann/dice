@@ -140,7 +140,7 @@ Tips and Tricks
 ```dart
 	class TestModule extends Module {
     	configure() {
-			namedBind("web-service-host", String).toInstace("http://test-service.name");
+			namedBind(String, "web-service-host").toInstace("http://test-service.name");
 		}
 	}
 	
