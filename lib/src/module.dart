@@ -26,3 +26,21 @@ abstract class Module {
   
   final Map<TypeMirrorWrapper, Binder> _bindings = new Map<TypeMirrorWrapper, Binder>();
 }
+
+/**
+ * Combines several [Module] into single one, allowing to inject
+ * a class from one module into a class from another module.
+ */
+class ModuleContainer extends Module {
+  ModuleContainer(List<Module> this._modules);
+
+  @override
+  configure() {
+    _modules.fold(_bindings, (acc, module) {
+      module.configure();
+      return acc..addAll(module._bindings);
+    });
+  }
+
+  List<Module> _modules;
+}
