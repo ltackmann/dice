@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013, the Dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
@@ -75,7 +75,6 @@ class MyClassToInject {
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
     
-    // named
     return constructorsInjected && variablesInjected && settersInjected;
   }
 }

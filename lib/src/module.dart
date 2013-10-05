@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013, the Dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
@@ -31,8 +31,8 @@ abstract class Module {
  * Combines several [Module] into single one, allowing to inject
  * a class from one module into a class from another module.
  */
-class ModuleContainer extends Module {
-  ModuleContainer(List<Module> this._modules);
+class _ModuleContainer extends Module {
+  _ModuleContainer(List<Module> this._modules);
 
   @override
   configure() {

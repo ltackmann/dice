@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013, the Dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
@@ -7,7 +7,7 @@ part of dice;
 /** Resolve types to their implementing classes */
 abstract class Injector {
   factory Injector(module) => new InjectorImpl(module);
-  factory Injector.fromModules(modules) => new InjectorImpl(new ModuleContainer(modules));
+  factory Injector.fromModules(modules) => new InjectorImpl(new _ModuleContainer(modules));
 
   /** Get new instance of [type] with dependencies resolved */
   dynamic getInstance(Type type);
@@ -54,14 +54,9 @@ class InjectorImpl implements Injector {
       throw new ArgumentError("no instance registered for type ${symbolAsString(tm.simpleName)}");
     }
     
-    InstanceMirror im;
     var binder = _module._getBindingFor(tm, name);
     var obj = binder._builder(); 
-    if(obj is Type) {
-      im = _newInstance(reflectClass(obj));
-    } else {
-      im = reflect(obj);
-    }
+    InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
     return _resolveInjections(im);
   }
   
@@ -131,7 +126,7 @@ class InjectorImpl implements Injector {
   /** Returns true if [declaration] is annotated with [Named] */
   bool _isNamed(DeclarationMirror declaration) => _namedAnnotationOf(declaration) != null;
   
-  /** Returns the name of the injection or null if it's unamed */
+  /** Returns name of injection or null if it's unamed */
   String _injectionName(DeclarationMirror declaration) {
     var namedMirror = _namedAnnotationOf(declaration);
     if(namedMirror == null) {

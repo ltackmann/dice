@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013, the Dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
@@ -14,7 +14,6 @@ part 'src/test_module.dart';
 main() {
   group('injector -', () {
     final myModule = new MyModule();
-    final yourModule = new YourModule();
     var injector = new Injector(myModule);
 
     test('inject singleton', () {
@@ -68,14 +67,29 @@ main() {
       expect(mySpecialClass is MySpecialClass, isTrue);
     });
 
-    test('module container', () {
+    
+  });
+  
+  group('modules - ', () {
+    final yourModule = new YourModule();
+    final myModule = new MyModule();
+    
+    test('multiple modules', () {
       var injector = new Injector.fromModules([myModule, yourModule]);
 
       var myClass = injector.getInstance(MyClass);
       var yourClass = injector.getInstance(YourClass);
 
-      expect(myClass is MyClass, isTrue);
-      expect(yourClass is YourClass, isTrue);
+      expect(myClass, new isInstanceOf<MyClass>('MyClass'));
+      expect(yourClass, new isInstanceOf<YourClass>('YourClass'));
+    });
+    
+    test('register runtime', () {
+      var injector = new Injector(myModule);
+      expect(() => injector.getInstance(YourClass), throwsArgumentError);
+      
+      injector.module.bind(YourClass).toType(YourClass);
+      expect(injector.getInstance(YourClass), new isInstanceOf<YourClass>('YourClass'));
     });
   });
   

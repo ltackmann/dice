@@ -1,11 +1,9 @@
 [![Build Status](https://drone.io/github.com/ltackmann/dice/status.png)](https://drone.io/github.com/ltackmann/dice/latest)
 
-Dice
-====
+# Dice
 Lightweight dependency injection framework for Dart.
 
-# Quick Guide
------------
+## Quick Guide
 Dice is configured by creating a **Module** instance that acts as factory binding your classes to instances. 
 Modules are passed to an **Injector** which looks for **@inject** annotations and resolves them to instances 
 bound in your module. It's really quite simple:
@@ -57,8 +55,7 @@ bound in your module. It's really quite simple:
 
 for more information see the full example [here](example/example_app.dart).
 
-Dependency Injection with Dice 
-------------------------------
+## Dependency Injection with Dice 
 You can use the **@inject** annotation to mark values for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
@@ -102,8 +99,7 @@ The actual values injected are configured by extending the **Module** class and 
  * ```bind(MyType).toBuilder(() => new MyType())``` bind **MyType** to function that can build instances of it 
 
 
-Named Injections
-----------------
+## Named Injections
 Dice supports named injections by using the **@Named** annotation. Currently this annotation 
 works everywhere the @inject annotation works, except for constructors. 
 
@@ -123,20 +119,18 @@ The configuration is as before except you now use method **namedBind** inside yo
  * ```namedBind(MyType, "my-name").toBuilder(() => new MyType())```
  
 
-Tips and Tricks
----------------
-**Tip 1.** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
+## Tips and Tricks
+**Get instances directly:** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
 ```dart
    MyClass instance = injector.getInstance(MyClass);
-
 ```
 
-**Tip 2.** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
+**Get named instances directly:** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
-**Tip 3.** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
+**Binding configuration values:** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
@@ -148,7 +142,31 @@ Tips and Tricks
 	String get webServiceHost => injector.getNamedInstance(String, "web-service-host");
 ``` 
 
+**Registrering dependencies at runtime:** You can register dependencies at runtime by accessing the **module** property on the **Injector** instance.
+```dart
+	 injector.module.bind(User).toInstance(user);
+	 :
+	 var user = injector.getInstance(User);
+``` 
 
+**Using multiple modules:** You can compose mudules using the **Injector.fromModules** constructor
+```dart
+	class MyModule extends Module {
+    	configure() {
+			bind(MyClass).toType(MyClass);
+		}
+	}
+	
+	class YourModule extends Module {
+    	configure() {
+			bind(YourClass).toType(YourClass);
+		}
+	}
+	
+	var injector = new Injector.fromModules(new MyModule(), new YourModule());
+	var myClass = injector.getInstance(MyClass);
+	var yourClass = injector.getInstance(YourClass);
+``` 
  
  
  
