@@ -3,7 +3,7 @@
 # Dice
 Lightweight dependency injection framework for Dart.
 
-## Quick Guide
+## Getting Started
 Dice is configured by creating a **Module** instance that acts as factory binding your classes to instances. 
 Modules are passed to an **Injector** which looks for **@inject** annotations and resolves them to instances 
 bound in your module. It's really quite simple:
