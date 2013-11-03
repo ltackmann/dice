@@ -147,7 +147,8 @@ class InjectorImpl implements Injector {
   /** Returns method name from [MethodMirror] */
   Symbol _methodName(MethodMirror method) {
     var name = symbolAsString(method.simpleName);
-    var symbolName = name.substring(0, name.length - 1);
+    var symbolName = (name[0] == "_") ? name.substring(1, name.length - 1) : name.substring(0, name.length - 1);
+    // TODO fix print("name $name symbol $symbolName");
     return stringAsSymbol(symbolName);
   }
   

@@ -71,7 +71,8 @@ class MyClassToInject {
     var variablesInjected = variablesToInject && variablesNotToInject;
     
     // setters
-    var settersToInject = (injections[r'setterToInject'] != null && injections[r'_setterToInject'] != null);
+    // TODO && injections[r'_setterToInject'] != null
+    var settersToInject = (injections[r'setterToInject'] != null);
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
     
