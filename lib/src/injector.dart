@@ -80,7 +80,7 @@ class InjectorImpl implements Injector {
   
   InstanceMirror _injectSetters(InstanceMirror instanceMirror) {
     var setters = injectableSetters(instanceMirror.type);
-    setters.forEach((MethodMirror setter) { 
+    setters.forEach((setter) { 
       var instanceToInject = _getInstanceFor(_firstParameter(setter));
       // set the resolved injection on the instance mirror we are injecting into
       instanceMirror.setField(_methodName(setter), instanceToInject);
@@ -90,7 +90,7 @@ class InjectorImpl implements Injector {
   
   InstanceMirror _injectVariables(InstanceMirror instanceMirror) {
     var variables = injectableVariables(instanceMirror.type);
-    variables.forEach((VariableMirror variable) {
+    variables.forEach((variable) {
       var instanceToInject = _getInstanceFor(variable.type, _injectionName(variable));
       // set the resolved injection on the instance mirror we are injecting into
       instanceMirror.setField(variable.simpleName, instanceToInject); 
@@ -98,26 +98,32 @@ class InjectorImpl implements Injector {
     return instanceMirror;
   }
   
-  /** Returns constructors that could be injected */
-  Iterable<MethodMirror> injectableConstructors(ClassMirror classMirror) {
-    var constructors = classMirror.constructors.values.where(_isInjectable);
+  /** Returns setters that can be injected */
+  Iterable<DeclarationMirror> injectableSetters(ClassMirror classMirror) {
+    return injectableDeclarations(classMirror).where(_isSetter);  
+  }
+  
+  /** Returns variables that can be injected */
+  Iterable<DeclarationMirror> injectableVariables(ClassMirror classMirror) {
+    return injectableDeclarations(classMirror).where(_isVariable);  
+  }
+  
+  /** Returns constructors that can be injected */
+  Iterable<DeclarationMirror> injectableConstructors(ClassMirror classMirror) {
+    var constructors = injectableDeclarations(classMirror).where(_isConstructor);
     if(constructors.isEmpty) {
-      // use the default constructor if no excplit injectable exists 
-      constructors = classMirror.constructors.values.where((MethodMirror m) => m.parameters.isEmpty);
+      // no excplit injectable constructor exists use the default constructor instead 
+      constructors = classMirror.declarations.values.where((DeclarationMirror m) => _isConstructor(m) && (m as MethodMirror).parameters.isEmpty);
       if(constructors.isEmpty) {
         throw new StateError("no injectable constructors exists for ${classMirror}");
       }
     }
     return constructors;
   }
-
-  /** Returns setters that need injection */
-  Iterable<MethodMirror> injectableSetters(ClassMirror classMirror) => 
-      classMirror.setters.values.where(_isInjectable);
-
-  /** Returns variables that need injection */
-  Iterable<VariableMirror> injectableVariables(ClassMirror classMirror) => 
-      classMirror.variables.values.where(_isInjectable);
+  
+  /** Returns injectable instance members such as variables, setters, constructors that need injection */
+  Iterable<DeclarationMirror> injectableDeclarations(ClassMirror classMirror) => 
+      classMirror.declarations.values.where(_isInjectable);
 
   /** Returns true if [mirror] is annotated with [Inject] */
   bool _isInjectable(DeclarationMirror mirror) => 
@@ -125,6 +131,15 @@ class InjectorImpl implements Injector {
   
   /** Returns true if [declaration] is annotated with [Named] */
   bool _isNamed(DeclarationMirror declaration) => _namedAnnotationOf(declaration) != null;
+  
+  /** Returns true if [declaration] is a constructor */
+  bool _isConstructor(DeclarationMirror declaration) => declaration is MethodMirror && (declaration as MethodMirror).isConstructor;
+  
+  /** Returns true if [declaration] is a variable */
+  bool _isVariable(DeclarationMirror declaration) => declaration is VariableMirror;
+  
+  /** Returns true if [declaration] is a setter */
+  bool _isSetter(DeclarationMirror declaration) => declaration is MethodMirror && (declaration as MethodMirror).isSetter;
   
   /** Returns name of injection or null if it's unamed */
   String _injectionName(DeclarationMirror declaration) {
