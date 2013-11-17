@@ -55,7 +55,7 @@ inject instances into your code. The following example should get you startd:
 for more information see the full example [here](example/example_app.dart).
 
 ## Dependency Injection with Dice 
-You can use the **@inject** annotation to mark values for injection the following ways:
+You can use the **@inject** annotation to mark objects and functions for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
@@ -124,12 +124,12 @@ The configuration is as before except you now use method **namedBind** inside yo
    MyClass instance = injector.getInstance(MyClass);
 ```
 
- * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
+ * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the injectors **getNamedInstance** method 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
- * **Binding configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
+ * **Binding and resolving configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
