@@ -4,9 +4,8 @@
 Lightweight dependency injection framework for Dart.
 
 ## Getting Started
-Dice is configured by creating a **Module** instance that acts as factory binding your classes to instances. 
-Modules are passed to an **Injector** which looks for **@inject** annotations and resolves them to instances 
-bound in your module. It's really quite simple:
+Dice consists of two parts. **Module**'s that contains your type bindings and **Injector**'s that uses the **Module** to 
+inject instances into your code. The following example should get you startd:
 
 **1.** Add the folowing to your **pubspec.yaml** and run **pub install**
 ```yaml
