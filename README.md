@@ -100,7 +100,7 @@ The actual values injected are configured by extending the **Module** class and 
 
 ## Named Injections
 Dice supports named injections by using the **@Named** annotation. Currently this annotation 
-works everywhere the @inject annotation works, except for constructors. 
+works everywhere the **@inject** annotation works, except for constructors. 
 
 ```dart
 	class MyClass {
