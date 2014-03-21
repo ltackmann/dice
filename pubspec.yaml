@@ -1,5 +1,5 @@
 name: dice
-version: 1.4.5
+version: 1.4.6
 author: Lars Tackmann <lars@solvr.io>
 description: Lightweight dependency injection framework for Dart.
 homepage: https://github.com/ltackmann/dice
