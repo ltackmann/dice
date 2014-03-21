@@ -4,9 +4,8 @@
 Lightweight dependency injection framework for Dart.
 
 ## Getting Started
-Dice is configured by creating a **Module** instance that acts as factory binding your classes to instances. 
-Modules are passed to an **Injector** which looks for **@inject** annotations and resolves them to instances 
-bound in your module. It's really quite simple:
+Dice consists of two parts. **Module**'s that contains your type bindings and **Injector**'s that uses the **Module** to 
+inject instances into your code. The following example should get you startd:
 
 **1.** Add the folowing to your **pubspec.yaml** and run **pub install**
 ```yaml
@@ -56,7 +55,7 @@ bound in your module. It's really quite simple:
 for more information see the full example [here](example/example_app.dart).
 
 ## Dependency Injection with Dice 
-You can use the **@inject** annotation to mark values for injection the following ways:
+You can use the **@inject** annotation to mark objects and functions for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
@@ -101,7 +100,7 @@ The actual values injected are configured by extending the **Module** class and 
 
 ## Named Injections
 Dice supports named injections by using the **@Named** annotation. Currently this annotation 
-works everywhere the @inject annotation works, except for constructors. 
+works everywhere the **@inject** annotation works, except for constructors. 
 
 ```dart
 	class MyClass {
@@ -125,12 +124,12 @@ The configuration is as before except you now use method **namedBind** inside yo
    MyClass instance = injector.getInstance(MyClass);
 ```
 
- * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the **Injector** directly 
+ * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the injectors **getNamedInstance** method 
 ```dart
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
- * **Binding configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
+ * **Binding and resolving configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
