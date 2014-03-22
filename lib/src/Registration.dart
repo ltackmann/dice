@@ -4,9 +4,9 @@
 
 part of dice;
 
-/** Holds binding between a [Type] and its instane. */
-class Binder {
-  /** Bind to a object [instance] that will be returned when the type is requested */
+/** Registration between a [Type] and its instance creation. */
+class Registration {
+  /** Register object [instance] that will be returned when the type is requested */
   toInstance(var instance) {
     if(!_isClass(instance)) {
       throw new ArgumentError("only objects can be bound using 'toInstance'");
@@ -14,7 +14,7 @@ class Binder {
     _builder = () => instance;
   }
   
-  /** Bind to a [function] that will be returned when the type is requested */
+  /** Register a [function] that will be returned when the type is requested */
   toFunction(var function) {
     if(_isClass(function)) {
       throw new ArgumentError("only functions can be bound using 'toFunction'");
@@ -22,12 +22,12 @@ class Binder {
     _builder = () => function;
   }
   
-  /** Bind to a [InstanceBuilder] that will emit new instances when the type is requested */
+  /** Register a [InstanceBuilder] that will emit new instances when the type is requested */
   toBuilder(TypeBuilder builder) {
     _builder = builder;
   }
   
-  /** Bind to a [type] that will be instantiated when the type is requested */
+  /** Register a [type] that will be instantiated when the type is requested */
   toType(Type type) {
     _builder = () => type;
   }

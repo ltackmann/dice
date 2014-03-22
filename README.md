@@ -4,10 +4,12 @@
 Lightweight dependency injection framework for Dart.
 
 ## Getting Started
-Dice consists of two parts. **Module**'s that contains your type bindings and **Injector**'s that uses the **Module** to 
-inject instances into your code. The following example should get you startd:
+Dice consists of two parts. 
+ * **Module**'s containing your class registrations 
+ * **Injector**'s that uses the **Module** to inject instances into your code. 
+The following example should get you startd:
 
-**1.** Add the folowing to your **pubspec.yaml** and run **pub install**
+**1.** Add the *Dice* to your **pubspec.yaml** and run **pub install**
 ```yaml
     dependencies:
       dice: any
@@ -28,14 +30,14 @@ inject instances into your code. The following example should get you startd:
 	}
 ```
 
-**3.** Register the type/class bindings in a module
+**3.** Register types and classes in a module
 ```dart
 	class ExampleModule extends Module {
 	  configure() {
-	    // bind CreditProcessor to a singleton
-	    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
-	    // bind BillingService to a prototype
-	    bind(BillingService).toType(BillingServiceImpl);
+	    // register [CreditProcessor] as a singleton
+	    register(CreditProcessor).toInstance(new CreditProcessorImpl());
+	    // register [BillingService] so a new version is created each time its requested
+	    register(BillingService).toType(BillingServiceImpl);
 	  }
 	}
 ```
@@ -90,12 +92,12 @@ You can use the **@inject** annotation to mark objects and functions for injecti
 	}
 ```
 
-The actual values injected are configured by extending the **Module** class and using one its binder functions
+The injected objects are configured by extending the **Module** class and using one its *register* functions
 
- * ```bind(MyType).toInstace(object)``` bind type **MyType** to existing object (singleton injections)
- * ```bind(MyType).toType(MyType)``` bind type **MyType** to an (possible alternative) class implementing it.
- * ```bind(MyTypedef).toFunction(function)``` bind a **typedef** to a function matching it.
- * ```bind(MyType).toBuilder(() => new MyType())``` bind **MyType** to function that can build instances of it 
+ * ```register(MyType).toInstace(object)``` register type **MyType** to existing object (singleton injections)
+ * ```register(MyType).toType(MyType)``` register type **MyType** to an (possible alternative) class implementing it.
+ * ```register(MyTypedef).toFunction(function)``` register a **typedef** to a function matching it.
+ * ```register(MyType).toBuilder(() => new MyType())``` register **MyType** to function that can build instances of it 
 
 
 ## Named Injections
@@ -110,12 +112,12 @@ works everywhere the **@inject** annotation works, except for constructors.
    	}
 ```
 
-The configuration is as before except you now use method **namedBind** inside your **Module** implementation.
+The configuration is as before except you now use method **namedRegister** in your **Module** implementation.
 
- * ```namedBind(MyType, "my-name").toInstace(object)```
- * ```namedBind(MyType, "my-name").toType(MyType)``` 
- * ```namedBind(MyTypedef, "my-name").toFunction(function)``` 
- * ```namedBind(MyType, "my-name").toBuilder(() => new MyType())```
+ * ```namedRegister(MyType, "my-name").toInstace(object)```
+ * ```namedRegister(MyType, "my-name").toType(MyType)``` 
+ * ```namedRegister(MyTypedef, "my-name").toFunction(function)``` 
+ * ```namedRegister(MyType, "my-name").toBuilder(() => new MyType())```
  
 
 ## Advanced Features
@@ -129,11 +131,11 @@ The configuration is as before except you now use method **namedBind** inside yo
    MyType instance = injector.getNamedInstance(MyType, "my-name");
 ```
 
- * **Binding and resolving configuration values** You can use named bindings to create a simple yet effective way of injecting configuration values into your application.
+ * **To register and resole configuration values** You can use named registrations to inject configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
-			namedBind(String, "web-service-host").toInstace("http://test-service.name");
+			namedRegister(String, "web-service-host").toInstace("http://test-service.name");
 		}
 	}
 	
@@ -143,7 +145,7 @@ The configuration is as before except you now use method **namedBind** inside yo
 
  * **Registrering dependencies at runtime** You can register dependencies at runtime by accessing the **module** property on the **Injector** instance.
 ```dart
-	 injector.module.bind(User).toInstance(user);
+	 injector.module.register(User).toInstance(user);
 	 :
 	 var user = injector.getInstance(User);
 ``` 
@@ -152,13 +154,13 @@ The configuration is as before except you now use method **namedBind** inside yo
 ```dart
 	class MyModule extends Module {
     	configure() {
-			bind(MyClass).toType(MyClass);
+			register(MyClass).toType(MyClass);
 		}
 	}
 	
 	class YourModule extends Module {
     	configure() {
-			bind(YourClass).toType(YourClass);
+			register(YourClass).toType(YourClass);
 		}
 	}
 	

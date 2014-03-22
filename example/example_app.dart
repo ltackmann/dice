@@ -19,9 +19,9 @@ main() {
 class ExampleModule extends Module {
   configure() {
     // bind CreditCardProcessor to a singleton
-    bind(CreditProcessor).toInstance(new CreditProcessorImpl());
+    register(CreditProcessor).toInstance(new CreditProcessorImpl());
     // bind BillingService to a type
-    bind(BillingService).toType(BillingServiceImpl);
+    register(BillingService).toType(BillingServiceImpl);
   }
 }
 

@@ -6,18 +6,18 @@ part of dice_test;
 
 class MyModule extends Module {
   configure() {
-    bind(MyClass).toInstance(new MyClass());
-    bind(MyOtherClass).toBuilder(() => new MyOtherClass());
-    bind(MyClassToInject).toType(MyClassToInject);
+    register(MyClass).toInstance(new MyClass());
+    register(MyOtherClass).toBuilder(() => new MyOtherClass());
+    register(MyClassToInject).toType(MyClassToInject);
     
     // named
-    namedBind(MyClass, "MySpecialClass").toType(MySpecialClass);
+    namedRegister(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
 }
 
 class YourModule extends Module {
   configure() {
-    bind(YourClass).toType(YourClass);
+    register(YourClass).toType(YourClass);
   }
 }
 

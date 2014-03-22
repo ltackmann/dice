@@ -50,12 +50,12 @@ class InjectorImpl implements Injector {
   Module get module => _module;
   
   dynamic _getInstanceFor(TypeMirror tm, [String name = null]) {
-    if(!_module._hasBindingFor(tm, name)) {
+    if(!_module._hasRegistrationFor(tm, name)) {
       throw new ArgumentError("no instance registered for type ${symbolAsString(tm.simpleName)}");
     }
     
-    var binder = _module._getBindingFor(tm, name);
-    var obj = binder._builder(); 
+    var registration = _module._getRegistrationFor(tm, name);
+    var obj = registration._builder(); 
     InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
     return _resolveInjections(im);
   }
@@ -133,13 +133,13 @@ class InjectorImpl implements Injector {
   bool _isNamed(DeclarationMirror declaration) => _namedAnnotationOf(declaration) != null;
   
   /** Returns true if [declaration] is a constructor */
-  bool _isConstructor(DeclarationMirror declaration) => declaration is MethodMirror && (declaration as MethodMirror).isConstructor;
+  bool _isConstructor(DeclarationMirror declaration) => declaration is MethodMirror && declaration.isConstructor;
   
   /** Returns true if [declaration] is a variable */
   bool _isVariable(DeclarationMirror declaration) => declaration is VariableMirror;
   
   /** Returns true if [declaration] is a setter */
-  bool _isSetter(DeclarationMirror declaration) => declaration is MethodMirror && (declaration as MethodMirror).isSetter;
+  bool _isSetter(DeclarationMirror declaration) => declaration is MethodMirror && declaration.isSetter;
   
   /** Returns name of injection or null if it's unamed */
   String _injectionName(DeclarationMirror declaration) {
@@ -174,7 +174,7 @@ class InjectorImpl implements Injector {
   /** Returns parameters (including optional) that can be injected */
   Iterable<ParameterMirror> _injectableParameters(MethodMirror method) => 
       // TODO support named parameters
-      method.parameters.where((pm) => _module._hasBindingFor(pm.type, null));
+      method.parameters.where((pm) => _module._hasRegistrationFor(pm.type, null));
   
   final Module _module;
 }

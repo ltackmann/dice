@@ -4,7 +4,7 @@
 
 part of dice;
 
-/** Wrapper for [TypeMirror] to support multiple named bindings for the same [Type] */
+/** Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
 class TypeMirrorWrapper {
   final TypeMirror typeMirror;
   final String name;

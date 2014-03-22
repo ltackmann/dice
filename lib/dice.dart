@@ -9,7 +9,7 @@ library dice;
 import 'dart:mirrors';
 
 part 'src/annotations.dart';
-part 'src/binder.dart';
+part 'src/Registration.dart';
 part 'src/injector.dart';
 part 'src/mirror_util.dart';
 part 'src/module.dart';

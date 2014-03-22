@@ -6,25 +6,25 @@ part of dice;
 
 /** Associates types with their concrete instances returned by the [Injector] */
 abstract class Module {
-  /** Bind [type] to an implementation */
-  Binder bind(Type type) => namedBind(type, null);
+  /** Register a [type] to an implementation */
+  Registration register(Type type) => namedRegister(type, null);
   
-  /** Bind [name] [type] to an implementation */
-  Binder namedBind(Type type, String name) {
-    var binder = new Binder();
+  /** register a [type] with [name] to an implementation */
+  Registration namedRegister(Type type, String name) {
+    var registration = new Registration();
     var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
-    _bindings[typeMirrorWrapper] = binder;
-    return binder;
+    _registrations[typeMirrorWrapper] = registration;
+    return registration;
   }
   
-  /** Configure type/instace bindings used in this module */
+  /** Configure type/instace registrations used in this module */
   configure();
   
-  bool _hasBindingFor(TypeMirror type, String name) => _bindings.containsKey(new TypeMirrorWrapper(type, name));
+  bool _hasRegistrationFor(TypeMirror type, String name) => _registrations.containsKey(new TypeMirrorWrapper(type, name));
   
-  Binder _getBindingFor(TypeMirror type, String name) => _bindings[new TypeMirrorWrapper(type, name)];
+  Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
   
-  final Map<TypeMirrorWrapper, Binder> _bindings = new Map<TypeMirrorWrapper, Binder>();
+  final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
 }
 
 /**
@@ -36,9 +36,9 @@ class _ModuleContainer extends Module {
 
   @override
   configure() {
-    _modules.fold(_bindings, (acc, module) {
+    _modules.fold(_registrations, (acc, module) {
       module.configure();
-      return acc..addAll(module._bindings);
+      return acc..addAll(module._registrations);
     });
   }
 
