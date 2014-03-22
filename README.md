@@ -5,8 +5,9 @@ Lightweight dependency injection framework for Dart.
 
 ## Getting Started
 Dice consists of two parts. 
- * **Module**'s containing your class registrations 
- * **Injector**'s that uses the **Module** to inject instances into your code. 
+ * **Modules** containing your class registrations.
+ * **Injectors** that uses the **Module** to inject instances into your code. 
+ 
 The following example should get you startd:
 
 **1.** Add the *Dice* to your **pubspec.yaml** and run **pub install**
@@ -94,7 +95,7 @@ You can use the **@inject** annotation to mark objects and functions for injecti
 
 The injected objects are configured by extending the **Module** class and using one its *register* functions
 
- * ```register(MyType).toInstace(object)``` register type **MyType** to existing object (singleton injections)
+ * ```register(MyType).toInstance(object)``` register type **MyType** to existing object (singleton injections)
  * ```register(MyType).toType(MyType)``` register type **MyType** to an (possible alternative) class implementing it.
  * ```register(MyTypedef).toFunction(function)``` register a **typedef** to a function matching it.
  * ```register(MyType).toBuilder(() => new MyType())``` register **MyType** to function that can build instances of it 
