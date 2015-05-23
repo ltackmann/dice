@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the Dice project authors. Please see the AUTHORS file
+// Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
@@ -6,7 +6,7 @@ library dice_test;
 
 import 'dart:mirrors';
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:dice/dice.dart';
 
 part 'src/test_module.dart';
@@ -30,16 +30,16 @@ main() {
       expect(identical(instances[0], instances[1]), isFalse, reason:'must be new instances');
     });
     
-    skip_test('inject function', () {
+    test('inject function', () {
       var func = injector.getInstance(MyFunction);
       expect(func, isNotNull);
       expect(func(), equals('MyFunction'));
-    });
+    }, skip:"function injection not working on current VM");
     
     test('getInstance', () {
       var instance = injector.getInstance(MyClassToInject);
       expect(instance, isNotNull);
-      expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
+      expect(instance, new isInstanceOf<MyClassToInject>());
       expect((instance as MyClassToInject).assertInjections(), isTrue);
     });
     
@@ -80,8 +80,8 @@ main() {
       var myClass = injector.getInstance(MyClass);
       var yourClass = injector.getInstance(YourClass);
 
-      expect(myClass, new isInstanceOf<MyClass>('MyClass'));
-      expect(yourClass, new isInstanceOf<YourClass>('YourClass'));
+      expect(myClass, new isInstanceOf<MyClass>());
+      expect(yourClass, new isInstanceOf<YourClass>());
     });
     
     test('register runtime', () {
@@ -89,7 +89,7 @@ main() {
       expect(() => injector.getInstance(YourClass), throwsArgumentError);
       
       injector.module.register(YourClass).toType(YourClass);
-      expect(injector.getInstance(YourClass), new isInstanceOf<YourClass>('YourClass'));
+      expect(injector.getInstance(YourClass), new isInstanceOf<YourClass>());
     });
   });
   
@@ -100,13 +100,13 @@ main() {
     test('new instance of MyClass', () {
       var instance = injector.getInstance(MyClass);
       expect(instance, isNotNull);
-      expect(instance, new isInstanceOf<MyClass>('MyClass'));
+      expect(instance, new isInstanceOf<MyClass>());
     });
 
     test('new instance of MyClassToInject', () {
       var instance = injector.getInstance(MyClassToInject);
       expect(instance, isNotNull);
-      expect(instance, new isInstanceOf<MyClassToInject>('MyClassToInject'));
+      expect(instance, new isInstanceOf<MyClassToInject>());
     });
     
     test('constructors', () {
