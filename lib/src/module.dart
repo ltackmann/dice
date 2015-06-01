@@ -11,7 +11,7 @@ abstract class Module {
   
   /** register a [type] with [name] to an implementation */
   Registration namedRegister(Type type, String name) {
-    var registration = new Registration();
+    var registration = new Registration(type);
     var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
     _registrations[typeMirrorWrapper] = registration;
     return registration;
