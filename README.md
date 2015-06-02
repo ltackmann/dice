@@ -96,7 +96,8 @@ You can use the **@inject** annotation to mark objects and functions for injecti
 The injected objects are configured by extending the **Module** class and using one its *register* functions
 
  * ```register(MyType).toInstance(object)``` register type **MyType** to existing object (singleton injections)
- * ```register(MyType).toType(MyType)``` register type **MyType** to an (possible alternative) class implementing it.
+ * ```register(MyType)``` register type **MyType**.
+ * ```register(MyType).toType(MyTypeImpl)``` register interface **MyType** to a class implementing it.
  * ```register(MyTypedef).toFunction(function)``` register a **typedef** to a function matching it.
  * ```register(MyType).toBuilder(() => new MyType())``` register **MyType** to function that can build instances of it 
 
@@ -116,7 +117,8 @@ works everywhere the **@inject** annotation works, except for constructors.
 The configuration is as before except you now use method **namedRegister** in your **Module** implementation.
 
  * ```namedRegister(MyType, "my-name").toInstace(object)```
- * ```namedRegister(MyType, "my-name").toType(MyType)``` 
+ * ```namedRegister(MyType, "my-name")``` 
+ * ```namedRegister(MyType, "my-name").toType(MyTypeImpl)``` 
  * ```namedRegister(MyTypedef, "my-name").toFunction(function)``` 
  * ```namedRegister(MyType, "my-name").toBuilder(() => new MyType())```
  
