@@ -66,8 +66,6 @@ main() {
       expect(mySpecialClass is MyClass, isTrue);
       expect(mySpecialClass is MySpecialClass, isTrue);
     });
-
-    
   });
   
   group('modules - ', () {
@@ -112,14 +110,12 @@ main() {
     test('constructors', () {
       var constructors = injector.injectableConstructors(classMirror).toList().map((c) => symbolAsString(c.simpleName));
       var expected = ['MyClassToInject.inject'];
-      
       expect(constructors, unorderedEquals(expected));
     });
     
     test('setters', () {
       var setters = injector.injectableSetters(classMirror).toList().map((s) => symbolAsString(s.simpleName));
       var expected = ['setterToInject=', '_setterToInject='];
-      
       expect(setters, unorderedEquals(expected));
     });
     

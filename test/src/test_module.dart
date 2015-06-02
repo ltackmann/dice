@@ -8,7 +8,7 @@ class MyModule extends Module {
   configure() {
     register(MyClass).toInstance(new MyClass());
     register(MyOtherClass).toBuilder(() => new MyOtherClass());
-    register(MyClassToInject).toType(MyClassToInject);
+    register(MyClassToInject);
     
     // named
     namedRegister(MyClass, "MySpecialClass").toType(MySpecialClass);
