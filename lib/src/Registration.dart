@@ -6,6 +6,11 @@ part of dice;
 
 /** Registration between a [Type] and its instance creation. */
 class Registration {
+  /** Create Registration defaulting to [type] */
+  Registration(Type type) {
+    toType(type);
+  }
+  
   /** Register object [instance] that will be returned when the type is requested */
   toInstance(var instance) {
     if(!_isClass(instance)) {
