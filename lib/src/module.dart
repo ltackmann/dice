@@ -5,6 +5,7 @@
 part of dice;
 
 /** Associates types with their concrete instances returned by the [Injector] */
+@deprecated
 abstract class Module {
   
   /** register a [type] with [name] (optional) to an implementation */

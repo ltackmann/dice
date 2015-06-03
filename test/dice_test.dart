@@ -86,7 +86,7 @@ main() {
       var injector = new Injector(myModule);
       expect(() => injector.getInstance(YourClass), throwsArgumentError);
       
-      injector.module.register(YourClass).toType(YourClass);
+      injector.register(YourClass).toType(YourClass);
       expect(injector.getInstance(YourClass), new isInstanceOf<YourClass>());
     });
   });

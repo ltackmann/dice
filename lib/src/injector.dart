@@ -6,8 +6,24 @@ part of dice;
 
 /** Resolve types to their implementing classes */
 abstract class Injector {
-  factory Injector(Module module) => new InjectorImpl(module);
+  factory Injector([Module module = null]) => new InjectorImpl(module);
+  
+  @deprecated
   factory Injector.fromModules(List<Module> modules) => new InjectorImpl(new _ModuleContainer(modules));
+  
+  factory Injector.fromInjectors(List<Injector> injectors) {
+    var injector = new InjectorImpl();
+    injectors.forEach((ijtor) =>
+      ijtor._registrations.forEach((typeMirrorWrapper, registration) {
+      if(!injector._registrations.containsKey(typeMirrorWrapper)) {
+        injector._registrations[typeMirrorWrapper] = registration;
+      }
+    })
+    );
+  }
+  
+  /** register a [type] with [name] (optional) to an implementation */
+  Registration register(Type type, [String name ]);
 
   /** Get new instance of [type] with [name] (optional) and all dependencies resolved */
   dynamic getInstance(Type type, [String name]);
@@ -16,14 +32,33 @@ abstract class Injector {
   Object resolveInjections(Object obj);
   
   /** Get the module used to configure this injector */
+  @deprecated
   Module get module;
 }
 
 /** Implementation of [Injector]. */
 class InjectorImpl implements Injector {
-  InjectorImpl(this._module) {
-    _module.configure();
+  final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
+  final Module _module;
+  
+  InjectorImpl([this._module = null]) {
+    if (_module != null) {
+      _module.configure();
+      _registrations.addAll(_module._registrations);
+    }
   }
+  
+  @override
+  Registration register(Type type, [String name = null]) {
+    var registration = new Registration(type);
+    var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
+    _registrations[typeMirrorWrapper] = registration;
+    return registration;
+  }
+  
+  bool _hasRegistrationFor(TypeMirror type, String name) => _registrations.containsKey(new TypeMirrorWrapper(type, name));
+  
+  Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
   
   @override
   dynamic getInstance(Type type, [String name = null]) {
@@ -41,11 +76,11 @@ class InjectorImpl implements Injector {
   Module get module => _module;
   
   dynamic _getInstanceFor(TypeMirror tm, [String name = null]) {
-    if(!_module._hasRegistrationFor(tm, name)) {
+    if(!_hasRegistrationFor(tm, name)) {
       throw new ArgumentError("no instance registered for type ${symbolAsString(tm.simpleName)}");
     }
     
-    var registration = _module._getRegistrationFor(tm, name);
+    var registration = _getRegistrationFor(tm, name);
     var obj = registration._builder(); 
     InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
     return _resolveInjections(im);
@@ -165,8 +200,7 @@ class InjectorImpl implements Injector {
   /** Returns parameters (including optional) that can be injected */
   Iterable<ParameterMirror> _injectableParameters(MethodMirror method) => 
       // TODO support named parameters
-      method.parameters.where((pm) => _module._hasRegistrationFor(pm.type, null));
-  
-  final Module _module;
+      method.parameters.where((pm) => _hasRegistrationFor(pm.type, null));
+
 }
 
