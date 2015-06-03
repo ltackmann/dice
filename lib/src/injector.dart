@@ -9,11 +9,8 @@ abstract class Injector {
   factory Injector(Module module) => new InjectorImpl(module);
   factory Injector.fromModules(List<Module> modules) => new InjectorImpl(new _ModuleContainer(modules));
 
-  /** Get new instance of [type] with dependencies resolved */
-  dynamic getInstance(Type type);
-  
-  /** Get new instance of [type] with [name] and all dependencies resolved */
-  dynamic getNamedInstance(Type type, String name);
+  /** Get new instance of [type] with [name] (optional) and all dependencies resolved */
+  dynamic getInstance(Type type, [String name]);
   
   /** Resolve injetions in existing Object (does not create a new instance) */
   Object resolveInjections(Object obj);
@@ -29,13 +26,7 @@ class InjectorImpl implements Injector {
   }
   
   @override
-  dynamic getInstance(Type type) {
-    var typeMirror = reflectClass(type);
-    return _getInstanceFor(typeMirror);
-  }
-  
-  @override
-  dynamic getNamedInstance(Type type, String name) {
+  dynamic getInstance(Type type, [String name = null]) {
     var typeMirror = reflectClass(type);
     return _getInstanceFor(typeMirror, name);
   }

@@ -11,7 +11,7 @@ class MyModule extends Module {
     register(MyClassToInject);
     
     // named
-    namedRegister(MyClass, "MySpecialClass").toType(MySpecialClass);
+    register(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
 }
 

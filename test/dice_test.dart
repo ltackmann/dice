@@ -60,7 +60,7 @@ main() {
     
     test('named injections', () {
       var myClass = injector.getInstance(MyClass);
-      var mySpecialClass = injector.getNamedInstance(MyClass, "MySpecialClass");
+      var mySpecialClass = injector.getInstance(MyClass, "MySpecialClass");
       expect(myClass is MyClass, isTrue);
       expect(myClass is! MySpecialClass, isTrue);
       expect(mySpecialClass is MyClass, isTrue);
