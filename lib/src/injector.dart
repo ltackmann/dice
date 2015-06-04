@@ -14,7 +14,7 @@ abstract class Injector {
   factory Injector.fromInjectors(List<Injector> injectors) {
     var injector = new InjectorImpl();
     injectors.forEach((ijtor) =>
-      ijtor._registrations.forEach((typeMirrorWrapper, registration) {
+      ijtor.registrations.forEach((typeMirrorWrapper, registration) {
       if(!injector._registrations.containsKey(typeMirrorWrapper)) {
         injector._registrations[typeMirrorWrapper] = registration;
       }
@@ -34,6 +34,9 @@ abstract class Injector {
   /** Get the module used to configure this injector */
   @deprecated
   Module get module;
+  
+  /** Get unmodifiable map of registrations */
+  Map<TypeMirrorWrapper, Registration> get registrations;
 }
 
 /** Implementation of [Injector]. */
@@ -74,6 +77,9 @@ class InjectorImpl implements Injector {
   
   @override
   Module get module => _module;
+  
+  @override
+  Map<TypeMirrorWrapper, Registration> get registrations => new UnmodifiableMapView(_registrations);
   
   dynamic _getInstanceFor(TypeMirror tm, [String name = null]) {
     if(!_hasRegistrationFor(tm, name)) {
