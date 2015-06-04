@@ -91,6 +91,50 @@ main() {
     });
   });
   
+  group('register/unregister -', () {
+    var injector = new Injector();
+    injector
+      ..register(MyClass).toType(MySpecialClass)
+      ..register(YourClass)
+      ..register(MyOtherClass)
+      ..register(MyClass, 'test').toType(MySpecialClass);
+    
+    test('get instances', () {
+      var myClass = injector.getInstance(MyClass);
+      var yourClass = injector.getInstance(YourClass);
+      var myOtherClass = injector.getInstance(MyOtherClass);
+
+      expect(myClass, new isInstanceOf<MySpecialClass>());
+      expect(yourClass, new isInstanceOf<YourClass>());
+      expect(myOtherClass, new isInstanceOf<MyOtherClass>());
+    });
+    
+    test('unregister runtime', () {
+      injector.unregister(MyClass);
+      injector.unregister(YourClass);
+      injector.unregister(MyOtherClass);
+      
+      var myNamedClass = injector.getInstance(MyClass, 'test');
+      
+      expect(() => injector.getInstance(MyClass), throwsArgumentError);
+      expect(() => injector.getInstance(YourClass), throwsArgumentError);
+      expect(() => injector.getInstance(MyOtherClass), throwsArgumentError);
+      expect(myNamedClass, new isInstanceOf<MySpecialClass>());
+    });
+    
+    test('register runtime', () {
+      injector
+        ..register(MyClass).toType(MySpecialClass)
+        ..register(YourClass);
+      
+      var myClass = injector.getInstance(MyClass);
+      var yourClass = injector.getInstance(YourClass);
+      
+      expect(myClass, new isInstanceOf<MySpecialClass>());
+      expect(yourClass, new isInstanceOf<YourClass>());
+    });
+  });
+  
   group('internals -', () {
     var injector = new InjectorImpl(new MyModule());
     var classMirror = reflectClass(MyClassToInject);

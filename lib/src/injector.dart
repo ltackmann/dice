@@ -23,7 +23,10 @@ abstract class Injector {
   }
   
   /** register a [type] with [name] (optional) to an implementation */
-  Registration register(Type type, [String name ]);
+  Registration register(Type type, [String name]);
+  
+  /** unregister a [type] and [name] (optional), returns [true] if registration has been removed*/
+  bool unregister(Type type, [String name]);
 
   /** Get new instance of [type] with [name] (optional) and all dependencies resolved */
   dynamic getInstance(Type type, [String name]);
@@ -59,9 +62,16 @@ class InjectorImpl implements Injector {
     return registration;
   }
   
+  @override
+  bool unregister(Type type, [String name = null]) {
+    return _removeRegistrationFor(reflectType(type), name) != null;
+  }
+  
   bool _hasRegistrationFor(TypeMirror type, String name) => _registrations.containsKey(new TypeMirrorWrapper(type, name));
   
   Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
+  
+  Registration _removeRegistrationFor(TypeMirror type, String name) => _registrations.remove(new TypeMirrorWrapper(type, name));
   
   @override
   dynamic getInstance(Type type, [String name = null]) {
