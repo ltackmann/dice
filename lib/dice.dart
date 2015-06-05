@@ -7,6 +7,7 @@ library dice;
 
 @MirrorsUsed(symbols: const ['inject', 'Named'])
 import 'dart:mirrors';
+import 'dart:collection';
 
 part 'src/annotations.dart';
 part 'src/Registration.dart';

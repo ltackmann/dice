@@ -6,11 +6,9 @@ part of dice;
 
 /** Associates types with their concrete instances returned by the [Injector] */
 abstract class Module {
-  /** Register a [type] to an implementation */
-  Registration register(Type type) => namedRegister(type, null);
   
-  /** register a [type] with [name] to an implementation */
-  Registration namedRegister(Type type, String name) {
+  /** register a [type] with [name] (optional) to an implementation */
+  Registration register(Type type, [String name = null]) {
     var registration = new Registration(type);
     var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
     _registrations[typeMirrorWrapper] = registration;

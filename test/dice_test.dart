@@ -52,19 +52,19 @@ main() {
       expect(identical(resolvedInstance, instance), isTrue);
     });
     
-    test('get module', () {
-      var moduleUsed = injector.module;
-      expect(moduleUsed, isNotNull);
-      expect(identical(moduleUsed, myModule), isTrue);
-    });
-    
     test('named injections', () {
       var myClass = injector.getInstance(MyClass);
-      var mySpecialClass = injector.getNamedInstance(MyClass, "MySpecialClass");
+      var mySpecialClass = injector.getInstance(MyClass, "MySpecialClass");
       expect(myClass is MyClass, isTrue);
       expect(myClass is! MySpecialClass, isTrue);
       expect(mySpecialClass is MyClass, isTrue);
       expect(mySpecialClass is MySpecialClass, isTrue);
+    });
+    
+    test('get registrations', () {
+      var registrations = injector.registrations;
+      expect(registrations, isNotNull);
+      expect(() => registrations[new TypeMirrorWrapper(reflectType(MyClass), null)] = new Registration(MyClass), throwsUnsupportedError);
     });
   });
   
@@ -86,8 +86,48 @@ main() {
       var injector = new Injector(myModule);
       expect(() => injector.getInstance(YourClass), throwsArgumentError);
       
-      injector.module.register(YourClass).toType(YourClass);
+      injector.register(YourClass).toType(YourClass);
       expect(injector.getInstance(YourClass), new isInstanceOf<YourClass>());
+    });
+    
+    test('unregister runtime', () {
+      var injector = new Injector();
+      injector
+        ..register(MyClass).toType(MySpecialClass)
+        ..register(YourClass)
+        ..register(MyOtherClass)
+        ..register(MyClass, 'test').toType(MySpecialClass);
+          
+      var myClass = injector.getInstance(MyClass);
+      var yourClass = injector.getInstance(YourClass);
+      var myOtherClass = injector.getInstance(MyOtherClass);
+      
+      expect(myClass, new isInstanceOf<MySpecialClass>());
+      expect(yourClass, new isInstanceOf<YourClass>());
+      expect(myOtherClass, new isInstanceOf<MyOtherClass>());
+      
+      injector.unregister(MyClass);
+      injector.unregister(YourClass);
+      injector.unregister(MyOtherClass);
+     
+      expect(() => injector.getInstance(MyClass), throwsArgumentError);
+      expect(() => injector.getInstance(YourClass), throwsArgumentError);
+      expect(() => injector.getInstance(MyOtherClass), throwsArgumentError);
+      
+      var myNamedClass = injector.getInstance(MyClass, 'test');
+      expect(myNamedClass, new isInstanceOf<MySpecialClass>());
+    });
+    
+    test('join injectors', () {
+      var injector1 = new Injector(myModule);
+      var injector2 = new Injector(yourModule);
+      var joinedInjector = new Injector.fromInjectors([injector1, injector2]);
+      
+      var myClass = joinedInjector.getInstance(MyClass);
+      var yourClass = joinedInjector.getInstance(YourClass);
+
+      expect(myClass, new isInstanceOf<MyClass>());
+      expect(yourClass, new isInstanceOf<YourClass>());
     });
   });
   
