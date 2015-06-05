@@ -8,7 +8,6 @@ part of dice;
 abstract class Injector {
   factory Injector([Module module = null]) => new InjectorImpl(module);
   
-  @deprecated
   factory Injector.fromModules(List<Module> modules) => new InjectorImpl(new _ModuleContainer(modules));
   
   factory Injector.fromInjectors(List<Injector> injectors) {
@@ -20,6 +19,7 @@ abstract class Injector {
       }
     })
     );
+    return injector;
   }
   
   /** register a [type] with [name] (optional) to an implementation */
@@ -34,10 +34,6 @@ abstract class Injector {
   /** Resolve injetions in existing Object (does not create a new instance) */
   Object resolveInjections(Object obj);
   
-  /** Get the module used to configure this injector */
-  @deprecated
-  Module get module;
-  
   /** Get unmodifiable map of registrations */
   Map<TypeMirrorWrapper, Registration> get registrations;
 }
@@ -45,12 +41,11 @@ abstract class Injector {
 /** Implementation of [Injector]. */
 class InjectorImpl implements Injector {
   final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
-  final Module _module;
   
-  InjectorImpl([this._module = null]) {
-    if (_module != null) {
-      _module.configure();
-      _registrations.addAll(_module._registrations);
+  InjectorImpl([module = null]) {
+    if (module != null) {
+      module.configure();
+      _registrations.addAll(module._registrations);
     }
   }
   
@@ -84,9 +79,6 @@ class InjectorImpl implements Injector {
     var instanceMirror = reflect(obj);
     return _resolveInjections(instanceMirror);
   }
-  
-  @override
-  Module get module => _module;
   
   @override
   Map<TypeMirrorWrapper, Registration> get registrations => new UnmodifiableMapView(_registrations);
