@@ -62,8 +62,8 @@ You can use the **@inject** annotation to mark objects and functions for injecti
 
  * Injection of public and private fields (object/instance variables)
 ```dart
-	class MyOtherClass {
-    	@inject
+    class MyOtherClass {
+        @inject
       	SomeClass field;
       	@inject
       	SomeOtherClass _privateField;
@@ -72,17 +72,17 @@ You can use the **@inject** annotation to mark objects and functions for injecti
   
  * Injection of constructor parameters 
 ```dart 
-	class MyClass {
- 		@inject
- 		MyClass(this.field);
- 		
- 		MyOtherClass field;
- 	}
+   class MyClass {
+      @inject
+      MyClass(this.field);
+
+      MyOtherClass field;
+    }
 ```
  
  * Injection of public and private setters 
 ```dart
-	class SomeClass {
+    class SomeClass {
       	@inject
       	set value(SomeOtherClass val) => _privateValue = val;
       	
@@ -90,16 +90,35 @@ You can use the **@inject** annotation to mark objects and functions for injecti
       	set _value(SomeOtherClass val) => _anotherPrivateValue = val;
 
       	SomeOtherClass _privateValue, _anotherPrivateValue;
-	}
+    }
 ```
 
-The injected objects are configured by extending the **Module** class and using one its *register* functions
+The injected objects are configured ether by extending the **Module** class and using one its *register* functions or directly on the **Injector**.
 
- * ```register(MyType).toInstance(object)``` register type **MyType** to existing object (singleton injections)
- * ```register(MyType)``` register type **MyType**.
- * ```register(MyType).toType(MyTypeImpl)``` register interface **MyType** to a class implementing it.
- * ```register(MyTypedef).toFunction(function)``` register a **typedef** to a function matching it.
- * ```register(MyType).toBuilder(() => new MyType())``` register **MyType** to function that can build instances of it 
+ * register type **MyType** to existing object (singleton injections)
+```dart
+register(MyType).toInstance(object)
+```
+
+ * register type **MyType**.
+```dart
+register(MyType)
+```
+
+ * register interface **MyType** to a class implementing it.
+```dart
+register(MyType).toType(MyTypeImpl)
+```
+
+ * register a **typedef** to a function matching it.
+```dart
+register(MyTypedef).toFunction(function)
+```
+
+ * register **MyType** to function that can build instances of it
+```dart
+register(MyType).toBuilder(() => new MyType())
+``` 
 
 
 ## Named Injections
@@ -107,53 +126,55 @@ Dice supports named injections by using the **@Named** annotation. Currently thi
 works everywhere the **@inject** annotation works, except for constructors. 
 
 ```dart
-	class MyClass {
+    class MyClass {
       	@inject
       	@Named('my-special-implementation')
       	SomeClass _someClass;
    	}
 ```
 
-The configuration is as before except you now use method **namedRegister** in your **Module** implementation.
+The configuration is as before except you now provide an additional **name** paramater.
 
- * ```namedRegister(MyType, "my-name").toInstace(object)```
- * ```namedRegister(MyType, "my-name")``` 
- * ```namedRegister(MyType, "my-name").toType(MyTypeImpl)``` 
- * ```namedRegister(MyTypedef, "my-name").toFunction(function)``` 
- * ```namedRegister(MyType, "my-name").toBuilder(() => new MyType())```
- 
+```dart
+register(MyType, "my-name").toType(MyTypeImpl)
+```
+
 
 ## Advanced Features
- * **Get instances directly** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method
+ * **Get instances directly** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method.
 ```dart
    MyClass instance = injector.getInstance(MyClass);
 ```
 
- * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the injectors **getNamedInstance** method 
+ * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the injectors **getInstance** method with its **name** parameter. 
 ```dart
-   MyType instance = injector.getNamedInstance(MyType, "my-name");
+   MyType instance = injector.getInstance(MyType, "my-name");
 ```
 
  * **To register and resole configuration values** You can use named registrations to inject configuration values into your application.
 ```dart
 	class TestModule extends Module {
     	configure() {
-			namedRegister(String, "web-service-host").toInstace("http://test-service.name");
+			register(String, "web-service-host").toInstace("http://test-service.name");
 		}
 	}
 	
 	// application code
-	String get webServiceHost => injector.getNamedInstance(String, "web-service-host");
+	String get webServiceHost => injector.getInstance(String, "web-service-host");
 ``` 
 
- * **Registrering dependencies at runtime** You can register dependencies at runtime by accessing the **module** property on the **Injector** instance.
+ * **Registering dependencies at runtime** You can register dependencies at runtime directly on the **Injector**.
 ```dart
-	 injector.module.register(User).toInstance(user);
-	 :
+	 injector.register(User).toInstance(user);
 	 var user = injector.getInstance(User);
 ``` 
 
- * **Using multiple modules** You can compose mudules using the **Injector.fromModules** constructor
+ * **Unregistering dependencies at runtime** You can unregister dependencies at runtime using the **unregister** method on the **Injector**.
+```dart
+	 injector.unregister(User);
+``` 
+
+ * **Using multiple modules** You can compose modules using the **Injector.fromModules** constructor.
 ```dart
 	class MyModule extends Module {
     	configure() {
@@ -167,10 +188,21 @@ The configuration is as before except you now use method **namedRegister** in yo
 		}
 	}
 	
-	var injector = new Injector.fromModules(new MyModule(), new YourModule());
+	var injector = new Injector.fromModules([new MyModule(), new YourModule()]);
 	var myClass = injector.getInstance(MyClass);
 	var yourClass = injector.getInstance(YourClass);
-``` 
+```
  
- 
+ * **Joining injectors** You can join multiple injector instances to one using the **Injector.fromInjectors** constructor.
+```dart
+	var myInjector = new Injector();
+	myInjector.register(MyClass).toType(MyClass);
+	
+	var yourInjector = new Injector();
+	yourInjector.register(YourClass).toType(YourClass);
+	
+	var injector = new Injector.fromInjectors([myInjector, yourInjector]);
+	var myClass = injector.getInstance(MyClass);
+	var yourClass = injector.getInstance(YourClass);
+```
  
