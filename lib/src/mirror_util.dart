@@ -11,7 +11,7 @@ class TypeMirrorWrapper {
   
   TypeMirrorWrapper(this.typeMirror, this.name);
   
-  TypeMirrorWrapper.fromType(Type type, this.name) : typeMirror = reflectClass(type);
+  TypeMirrorWrapper.fromType(Type type, this.name) : typeMirror = reflectType(type);
   
   String get qualifiedName => symbolAsString(typeMirror.qualifiedName) + (name != null ? name : "");
   

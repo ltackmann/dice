@@ -9,7 +9,9 @@ class MyModule extends Module {
     register(MyClass).toInstance(new MyClass());
     register(MyOtherClass).toBuilder(() => new MyOtherClass());
     register(MyClassToInject);
-    
+    register(MyFunction).toFunction(MyFunctionToInject);
+    register(MyClassFunction).toFunction(new MyClass().getName);
+
     // named
     register(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
@@ -96,6 +98,9 @@ class YourClass {
   String getName() => "YourClass";
 }
 
+MyFunctionToInject() => "MyFunction";
+
 typedef String MyFunction();
+typedef String MyClassFunction();
 
 

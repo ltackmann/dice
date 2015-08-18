@@ -29,12 +29,18 @@ main() {
       expect(instances, everyElement(predicate((e) => e.getName() == 'MyOtherClass', '')));
       expect(identical(instances[0], instances[1]), isFalse, reason:'must be new instances');
     });
-    
+
     test('inject function', () {
       var func = injector.getInstance(MyFunction);
       expect(func, isNotNull);
       expect(func(), equals('MyFunction'));
-    }, skip:"function injection not working on current VM");
+    });
+
+    test('inject function in class', () {
+      var func = injector.getInstance(MyClassFunction);
+      expect(func, isNotNull);
+      expect(func(), equals('MyClass'));
+    });
     
     test('getInstance', () {
       var instance = injector.getInstance(MyClassToInject);

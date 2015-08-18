@@ -70,7 +70,7 @@ class InjectorImpl implements Injector {
   
   @override
   dynamic getInstance(Type type, [String name = null]) {
-    var typeMirror = reflectClass(type);
+    var typeMirror = reflectType(type);
     return _getInstanceFor(typeMirror, name);
   }
   
