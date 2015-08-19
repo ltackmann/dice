@@ -13,8 +13,8 @@ The following example should get you startd:
 
 **1.** Add the *Dice* to your **pubspec.yaml** and run **pub install**
 ```yaml
-    dependencies:
-      dice: any
+dependencies:
+   dice: any
 ```
 
 **2.** Create some classes and interfaces to inject
