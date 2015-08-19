@@ -1,0 +1,13 @@
+language: dart
+sudo: false
+dart:
+  - stable
+before_script:
+  - chmod +x run_tests.sh
+script: ./run_tests.sh
+branches:
+  only:
+    - master
+cache:
+  directories:
+    - $HOME/.pub-cache
