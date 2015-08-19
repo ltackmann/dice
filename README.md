@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/ltackmann/dice.svg)](https://travis-ci.org/ltackmann/dice)
 [![Coverage Status](https://coveralls.io/repos/ltackmann/dice/badge.svg)](https://coveralls.io/r/ltackmann/dice)
 
+[![Coverage Status](https://coveralls.io/repos/ltackmann/dice/badge.svg)](https://coveralls.io/github/ltackmann/dice)
+
 # Dice
 Lightweight dependency injection framework for Dart.
 
