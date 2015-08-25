@@ -13,9 +13,13 @@ class MyModule extends Module {
     register(MyClassToInject);
     register(MyFunction).toFunction(MyFunctionToInject);
     register(MyClassFunction).toFunction(new MyClass().getName);
+    register(MyContainer);
 
     // named
     register(MyClass, "MySpecialClass").toType(MySpecialClass);
+
+    registerAdapter(MyInterface, MyClass);
+    registerAdapter(MyInterface, MySpecialClass).toType(MyAdaptor);
   }
 }
 
@@ -23,6 +27,22 @@ class YourModule extends Module {
   configure() {
     register(YourClass).toType(YourClass);
   }
+}
+
+class MyContainer {
+  @InjectAdapter(MyClass, name: "MySpecialClass")
+  MyInterface interface;
+}
+
+class MyInterface {
+  String get name => null;
+}
+
+class MyAdaptor extends MyInterface {
+  @Inject(name: "MySpecialClass", isAdaptee: true)
+  MySpecialClass myClass;
+
+  String get name => '-' + myClass.getName() + '-';
 }
 
 class MyClassToInject {

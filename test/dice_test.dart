@@ -68,6 +68,15 @@ main() {
       expect(mySpecialClass is MyClass, isTrue);
       expect(mySpecialClass is MySpecialClass, isTrue);
     });
+
+    test('adapter injections', () {
+      var myInterface = injector.getAdapterInstance(MyInterface, MyClass);
+      var mySpecialClass = injector.getAdapterInstance(MyInterface, MyClass, 'MySpecialClass');
+      expect(myInterface is MyInterface, isTrue);
+      expect(myInterface is! MyAdaptor, isTrue);
+      expect(mySpecialClass is MyInterface, isTrue);
+      expect(mySpecialClass is MyAdaptor, isTrue);
+    });
     
     test('get registrations', () {
       var registrations = injector.registrations;
@@ -153,6 +162,13 @@ main() {
       var instance = injector.getInstance(MyClassToInject);
       expect(instance, isNotNull);
       expect(instance, new isInstanceOf<MyClassToInject>());
+    });
+
+    test('new instance of MyContainer', () {
+      var instance = injector.getInstance(MyContainer);
+      expect(instance, isNotNull);
+      expect(instance, new isInstanceOf<MyContainer>());
+      expect((instance as MyContainer).interface, new isInstanceOf<MyAdaptor>());
     });
     
     test('constructors', () {

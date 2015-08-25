@@ -7,12 +7,12 @@
 /** Lightweight dependency injection framework for Dart. */
 library d17;
 
-@MirrorsUsed(symbols: const ['inject', 'Inject'])
+@MirrorsUsed(symbols: const ['inject', 'Inject', 'InjectAdapter'])
 import 'dart:mirrors';
 import 'dart:collection';
 
 part 'src/annotations.dart';
-part 'src/registration.dart';
+part 'src/Registration.dart';
 part 'src/injector.dart';
 part 'src/mirror_util.dart';
 part 'src/module.dart';

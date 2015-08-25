@@ -7,10 +7,23 @@
 part of d17;
 
 /** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
-const inject = const Inject();
-class Inject {
-  const Inject({String this.name});
 
-  final String name;
+abstract class NameableInject {
+  String get name;
 }
 
+const inject = const Inject();
+class Inject implements NameableInject {
+  const Inject({String this.name, bool this.isAdaptee: false});
+
+  final String name;
+  final bool isAdaptee;
+}
+
+class InjectAdapter implements NameableInject {
+  const InjectAdapter(Type this.adapteeType, {String this.name, String this.adapterName});
+
+  final String name;
+  final Type adapteeType;
+  final String adapterName;
+}

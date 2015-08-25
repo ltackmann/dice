@@ -16,13 +16,25 @@ abstract class Module {
     _registrations[typeMirrorWrapper] = registration;
     return registration;
   }
+
+  /** register an adapter [type] with [adapteeType] (optional) [name] (optional) to an implementation */
+  Registration registerAdapter(Type type, [Type adapteeType = Object, String name = null]) {
+    var registration = new Registration(type);
+    var typeMirrorWrapper = new TypeMirrorWrapper.fromTypeAsAdapter(type, name, adapteeType);
+    _registrations[typeMirrorWrapper] = registration;
+    return registration;
+  }
   
-  /** Configure type/instace registrations used in this module */
+  /** Configure type/instance registrations used in this module */
   configure();
   
   bool _hasRegistrationFor(TypeMirror type, String name) => _registrations.containsKey(new TypeMirrorWrapper(type, name));
-  
+
   Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
+
+  bool _hasRegistrationForAdapter(TypeMirror type, TypeMirror adapteeType, String name) => _registrations.containsKey(new TypeMirrorWrapper.asAdapter(type, adapteeType, name));
+
+  Registration _getRegistrationForAdapter(TypeMirror type, TypeMirror adapteeType, String name) => _registrations[new TypeMirrorWrapper.asAdapter(type, adapteeType, name)];
   
   final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
 }
