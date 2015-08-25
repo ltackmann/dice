@@ -7,12 +7,8 @@ part of dice;
 /** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
 const inject = const Inject();
 class Inject {
-  const Inject();
-}
+  const Inject({String this.name});
 
-/** Used in conjunction with [Inject] to select a specific named target for injection */
-class Named {
-  const Named(this.name);
-  
   final String name;
 }
+

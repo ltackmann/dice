@@ -163,7 +163,7 @@ class InjectorImpl implements Injector {
   bool _isInjectable(DeclarationMirror mirror) => 
       mirror.metadata.any((InstanceMirror im) => im.reflectee is Inject);
   
-  /** Returns true if [declaration] is annotated with [Named] */
+  /** Returns true if [declaration] is annotated with [Inject] with a name */
   bool _isNamed(DeclarationMirror declaration) => _namedAnnotationOf(declaration) != null;
   
   /** Returns true if [declaration] is a constructor */
@@ -184,11 +184,11 @@ class InjectorImpl implements Injector {
     return namedMirror.name;
   }
   
-  /** Get [Named] annotation for [declaration]. Returns null is non exists */
-  Named _namedAnnotationOf(DeclarationMirror declaration) {
-    var namedMirror = declaration.metadata.firstWhere((InstanceMirror im) => im.reflectee is Named, orElse: () => null);
-    if(namedMirror != null) {
-      return (namedMirror.reflectee as Named);
+  /** Get [Inject] annotation for [declaration]. Returns null is non exists */
+  Inject _namedAnnotationOf(DeclarationMirror declaration) {
+    var namedMirror = declaration.metadata.firstWhere((InstanceMirror im) => im.reflectee is Inject, orElse: () => null);
+    if(namedMirror != null && namedMirror.reflectee.name != null) {
+      return (namedMirror.reflectee as Inject);
     }
     return null;
   }

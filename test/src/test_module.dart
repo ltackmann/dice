@@ -52,12 +52,10 @@ class MyClassToInject {
   MyClass variableNotToInject;
   MyOtherClass _variableNotToInject;
   
-  @inject
-  @Named("MySpecialClass")
+  @Inject(name: 'MySpecialClass')
   MyClass namedVariableToInject;
   
-  @inject
-  @Named("MySpecialClass")
+  @Inject(name: 'MySpecialClass')
   MyClass _namedVariableToInject;
   
   // Map to trace injections from setters or constructors
