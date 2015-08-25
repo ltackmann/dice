@@ -1,20 +1,23 @@
 [![Build Status](https://travis-ci.org/ltackmann/dice.svg)](https://travis-ci.org/ltackmann/dice)
 [![Coverage Status](https://coveralls.io/repos/ltackmann/dice/badge.svg?branch=master&service=github)](https://coveralls.io/github/ltackmann/dice?branch=master)
 
-# Dice
+# D17
 Lightweight dependency injection framework for Dart.
 
 ## Getting Started
-Dice consists of two parts. 
+D17 consists of two parts.
  * **Modules** containing your class registrations.
  * **Injectors** that uses the **Module** to inject instances into your code. 
  
 The following example should get you startd:
 
-**1.** Add the *Dice* to your **pubspec.yaml** and run **pub install**
+**1.** Add *D17* to your **pubspec.yaml** and run **pub install**
 ```yaml
 dependencies:
-   dice: any
+   d17:
+    git:
+      ref: master
+      url: https://github.com/llamadonica/d17.git
 ```
 
 **2.** Create some classes and interfaces to inject
@@ -124,13 +127,12 @@ register(MyType).toBuilder(() => new MyType())
 
 
 ## Named Injections
-Dice supports named injections by using the **@Named** annotation. Currently this annotation 
+Dice supports named injections by using the **@Inject(name: 'foo')** annotation. Currently this annotation
 works everywhere the **@inject** annotation works, except for constructors. 
 
 ```dart
 class MyClass {
-  @inject
-  @Named('my-special-implementation')
+  @Inject(name: 'my-special-implementation')
   SomeClass _someClass;
 }
 ```

@@ -1,13 +1,15 @@
-// Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013-2015, the dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
-library dice_test;
+// Modified for d17 by Adam Stark <llamadonica@gmail.com>
+
+library d17_test;
 
 import 'dart:mirrors';
 
 import 'package:test/test.dart';
-import 'package:dice/dice.dart';
+import 'package:d17/d17.dart';
 
 part 'src/test_module.dart';
 
