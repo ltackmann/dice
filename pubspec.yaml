@@ -1,8 +1,8 @@
-name: dice
+name: d17
 version: 1.6.1
-author: Lars Tackmann <lars@solvr.io>
+author: Adam Stark <llamadonica@gmail.com>
 description: Lightweight dependency injection framework for Dart.
-homepage: https://github.com/ltackmann/dice
+homepage: https://github.com/llamadonica/d17
 environment:
   sdk: '>=1.9.0 <2.0.0'
 dependencies:
