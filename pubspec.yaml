@@ -1,5 +1,5 @@
 name: d17
-version: 1.6.1
+version: 1.7.0
 author: Adam Stark <llamadonica@gmail.com>
 description: Lightweight dependency injection framework for Dart, derived from the Dice framework by Lars Tackmann
 homepage: https://github.com/llamadonica/d17
