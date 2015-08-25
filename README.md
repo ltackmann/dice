@@ -49,7 +49,7 @@ class ExampleModule extends Module {
 
 **4.** Run it
 ```dart
-import "package:dice/dice.dart";
+import "package:d17/d17.dart";
 main() {
 	var injector = new Injector(new ExampleModule());
 	var billingService = injector.getInstance(BillingService);
@@ -61,7 +61,7 @@ main() {
 
 for more information see the full example [here](example/example_app.dart).
 
-## Dependency Injection with Dice 
+## Dependency Injection with d17
 You can use the **@inject** annotation to mark objects and functions for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
@@ -127,7 +127,7 @@ register(MyType).toBuilder(() => new MyType())
 
 
 ## Named Injections
-Dice supports named injections by using the **@Inject(name: 'foo')** annotation. Currently this annotation
+d17 supports named injections by using the **@Inject(name: 'foo')** annotation. Currently this annotation
 works everywhere the **@inject** annotation works, except for constructors. 
 
 ```dart
@@ -143,9 +143,38 @@ The configuration is as before except you now provide an additional **name** par
 register(MyType, "my-name").toType(MyTypeImpl)
 ```
 
+## Adapter / Adaptee Injections
+d17 supports injecting adapters to make it easy to create interfaces that connect to your objects.
+
+```dart
+class MyClass {
+  @InjectAdapter(SomeAdaptee)
+  SomeAdapter _someClass;
+}
+
+class MySpecializedAdapter extends SomeAdapter {
+   @Inject(isAdaptee: true)
+   MySpecializedAdaptee adaptee;
+   ...
+}
+
+class MySpecializedAdaptee extends SomeAdaptee {
+   ...
+}
+
+```
+The configuration is a little different with, the use of the `registerAdapter` function.
+
+```dart
+registerAdapter(SomeAdapter, MySpecializedAdaptee).toType(MySpecializedAdapter);
+register(SomeAdaptee).toType(MySpecializedAdaptee);
+```
+
+Also note the use of `@Inject(isAdaptee: true)`. That tells the injector to use the inject the specialized version, rather than the generic one within the adapter. It will fail if the given type is incompatible with the specialized forms.
+
 
 ## Advanced Features
- * **Get instances directly** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method.
+ * **Get instances directly** Instead of using the `@inject` annotation to resolve injections you can use the injectors **getInstance** method.
 ```dart
 MyClass instance = injector.getInstance(MyClass);
 ```
