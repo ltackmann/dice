@@ -1,8 +1,10 @@
-// Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013-2015, the dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
-part of dice;
+// Modified for d17 by Adam Stark <llamadonica@gmail.com>
+
+part of d17;
 
 /** Associates types with their concrete instances returned by the [Injector] */
 abstract class Module {
@@ -14,13 +16,25 @@ abstract class Module {
     _registrations[typeMirrorWrapper] = registration;
     return registration;
   }
+
+  /** register an adapter [type] with [adapteeType] (optional) [name] (optional) to an implementation */
+  Registration registerAdapter(Type type, [Type adapteeType = Object, String name = null]) {
+    var registration = new Registration(type);
+    var typeMirrorWrapper = new TypeMirrorWrapper.fromTypeAsAdapter(type, name, adapteeType);
+    _registrations[typeMirrorWrapper] = registration;
+    return registration;
+  }
   
-  /** Configure type/instace registrations used in this module */
+  /** Configure type/instance registrations used in this module */
   configure();
   
   bool _hasRegistrationFor(TypeMirror type, String name) => _registrations.containsKey(new TypeMirrorWrapper(type, name));
-  
+
   Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
+
+  bool _hasRegistrationForAdapter(TypeMirror type, TypeMirror adapteeType, String name) => _registrations.containsKey(new TypeMirrorWrapper.asAdapter(type, adapteeType, name));
+
+  Registration _getRegistrationForAdapter(TypeMirror type, TypeMirror adapteeType, String name) => _registrations[new TypeMirrorWrapper.asAdapter(type, adapteeType, name)];
   
   final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
 }

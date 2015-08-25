@@ -4,7 +4,7 @@
 
 library dice_example;
 
-import "../lib/dice.dart";
+import "../lib/d17.dart";
 
 part "example_classes.dart";
 

@@ -1,8 +1,10 @@
-// Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
+// Copyright (c) 2013-2015, the dice project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed 
 // by a Apache license that can be found in the LICENSE file.
 
-part of dice_test;
+// Modified for d17 by Adam Stark <llamadonica@gmail.com>
+
+part of d17_test;
 
 class MyModule extends Module {
   configure() {
@@ -11,9 +13,13 @@ class MyModule extends Module {
     register(MyClassToInject);
     register(MyFunction).toFunction(MyFunctionToInject);
     register(MyClassFunction).toFunction(new MyClass().getName);
+    register(MyContainer);
 
     // named
     register(MyClass, "MySpecialClass").toType(MySpecialClass);
+
+    registerAdapter(MyInterface, MyClass);
+    registerAdapter(MyInterface, MySpecialClass).toType(MyAdaptor);
   }
 }
 
@@ -21,6 +27,22 @@ class YourModule extends Module {
   configure() {
     register(YourClass).toType(YourClass);
   }
+}
+
+class MyContainer {
+  @InjectAdapter(MyClass, name: "MySpecialClass")
+  MyInterface interface;
+}
+
+class MyInterface {
+  String get name => null;
+}
+
+class MyAdaptor extends MyInterface {
+  @Inject(name: "MySpecialClass", isAdaptee: true)
+  MySpecialClass myClass;
+
+  String get name => '-' + myClass.getName() + '-';
 }
 
 class MyClassToInject {
@@ -52,12 +74,10 @@ class MyClassToInject {
   MyClass variableNotToInject;
   MyOtherClass _variableNotToInject;
   
-  @inject
-  @Named("MySpecialClass")
+  @Inject(name: 'MySpecialClass')
   MyClass namedVariableToInject;
   
-  @inject
-  @Named("MySpecialClass")
+  @Inject(name: 'MySpecialClass')
   MyClass _namedVariableToInject;
   
   // Map to trace injections from setters or constructors
