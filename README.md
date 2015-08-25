@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/ltackmann/dice.svg)](https://travis-ci.org/ltackmann/dice)
-[![Coverage Status](https://coveralls.io/repos/ltackmann/dice/badge.svg?branch=master&service=github)](https://coveralls.io/github/ltackmann/dice?branch=master)
+[![Build Status](https://travis-ci.org/llamadonica/d17.svg)](https://travis-ci.org/llamadonica/d17)
+[![Coverage Status](https://coveralls.io/repos/llamadonica/d17/badge.svg?branch=master&service=github)](https://coveralls.io/github/llamadonica/d17?branch=master)
 
 # D17
 Lightweight dependency injection framework for Dart.
