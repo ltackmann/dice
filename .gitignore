@@ -1,3 +1,17 @@
-.pub
-packages
+# dart
+*\.packages
+build
+.buildlog
+.pub/
 pubspec.lock
+packages
+
+# idea
+*.iml
+*.ipr
+*.iws
+.idea/
+*.dart.js
+*.js_
+*.js.deps
+*.js.map
