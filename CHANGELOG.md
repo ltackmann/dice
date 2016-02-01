@@ -1,3 +1,6 @@
+#### 1.6.4
+* Add more tests of named injections
+
 #### 1.6.3
 * Bump versions and improve travis build
 * Update copyright

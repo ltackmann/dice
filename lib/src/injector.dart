@@ -163,9 +163,6 @@ class InjectorImpl implements Injector {
   bool _isInjectable(DeclarationMirror mirror) =>
       mirror.metadata.any((InstanceMirror im) => im.reflectee is Inject);
 
-  /** Returns true if [declaration] is annotated with [Named] */
-  bool _isNamed(DeclarationMirror declaration) => _namedAnnotationOf(declaration) != null;
-
   /** Returns true if [declaration] is a constructor */
   bool _isConstructor(DeclarationMirror declaration) => declaration is MethodMirror && declaration.isConstructor;
 
@@ -177,10 +174,11 @@ class InjectorImpl implements Injector {
 
   /** Returns name of injection or null if it's unamed */
   String _injectionName(DeclarationMirror declaration) {
-    if(_isNamed(declaration)) {
-      return namedMirror.name;
+    var namedMirror = _namedAnnotationOf(declaration);
+    if(namedMirror == null) {
+      return null;
     }
-    return null;
+    return namedMirror.name;
   }
 
   /** Get [Named] annotation for [declaration]. Returns null is non exists */

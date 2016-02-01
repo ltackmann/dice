@@ -38,6 +38,7 @@ class MyClassToInject {
   set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
 
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
+  
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
 
   // TODO named setter injection
@@ -70,7 +71,8 @@ class MyClassToInject {
     // variables
     var variablesToInject = (variableToInject != null && _variableToInject != null);
     var variablesNotToInject = (variableNotToInject == null && _variableNotToInject == null);
-    var variablesInjected = variablesToInject && variablesNotToInject;
+    var namedVariablesToInject = (_namedVariableToInject != null && namedVariableToInject != null);
+    var variablesInjected = variablesToInject && variablesNotToInject && namedVariablesToInject;
 
     // setters
     // TODO && injections[r'_setterToInject'] != null
