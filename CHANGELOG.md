@@ -1,5 +1,6 @@
 #### 1.6.3
 * Bump versions and improve travis build
+* Update copyright
 
 #### 1.6.2
 * Added change log

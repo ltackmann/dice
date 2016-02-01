@@ -1,5 +1,5 @@
-// Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed 
+// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
 part of dice;
@@ -10,7 +10,7 @@ class Registration {
   Registration(Type type) {
     toType(type);
   }
-  
+
   /** Register object [instance] that will be returned when the type is requested */
   toInstance(var instance) {
     if(!_isClass(instance)) {
@@ -18,7 +18,7 @@ class Registration {
     }
     _builder = () => instance;
   }
-  
+
   /** Register a [function] that will be returned when the type is requested */
   toFunction(var function) {
     if(_isClass(function)) {
@@ -26,19 +26,19 @@ class Registration {
     }
     _builder = () => function;
   }
-  
+
   /** Register a [InstanceBuilder] that will emit new instances when the type is requested */
   toBuilder(TypeBuilder builder) {
     _builder = builder;
   }
-  
+
   /** Register a [type] that will be instantiated when the type is requested */
   toType(Type type) {
     _builder = () => type;
   }
-  
+
   bool _isClass(var instance) => reflect(instance).type is! FunctionTypeMirror;
-  
+
   TypeBuilder _builder;
 }
 
