@@ -1,5 +1,5 @@
 // Copyright (c) 2013-2015, the project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed 
+// for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
 part of dice_example;
@@ -7,13 +7,15 @@ part of dice_example;
 class BillingServiceImpl implements BillingService {
   @inject
   CreditProcessor _processor;
-  
+
   Receipt chargeOrder(Order order, CreditCard creditCard) {
     if(!(_processor.validate(creditCard))) {
       throw new ArgumentError("payment method not accepted");
     }
     // :
     print("charge order for ${order.item}");
+    // :
+    return new Receipt(order);
   }
 }
 
@@ -34,10 +36,13 @@ class CreditCard {
   final String type;
 }
 
-class Order { 
+class Order {
   Order(this.item);
   final String item;
 }
 
-class Receipt { }
+class Receipt {
+  final Order order;
 
+  Receipt(this.order);
+}

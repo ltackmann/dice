@@ -11,3 +11,9 @@ branches:
 cache:
   directories:
     - $HOME/.pub-cache
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+    recipients:
+      - ltackmann@gmail.com
