@@ -1,3 +1,6 @@
+#### 1.6.3
+* Bump versions and improve travis build
+
 #### 1.6.2
 * Added change log
 
