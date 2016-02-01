@@ -1,3 +1,6 @@
+#### 1.6.5
+* Remove dependency on meta package 
+
 #### 1.6.4
 * Add more tests of named injections
 
