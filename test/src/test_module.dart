@@ -12,6 +12,9 @@ class MyModule extends Module {
     register(MyFunction).toFunction(MyFunctionToInject);
     register(MyClassFunction).toFunction(new MyClass().getName);
 
+    // Singleton
+    register(MySingletonClass).toType(MySpecialSingletonClass).asSingleton();
+
     // named
     register(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
@@ -20,6 +23,23 @@ class MyModule extends Module {
 class YourModule extends Module {
   configure() {
     register(YourClass).toType(YourClass);
+  }
+}
+
+class MySingletonModule extends Module {
+    configure() {
+        // Singleton
+        register(AnotherSingletonClass).asSingleton();
+    }
+}
+
+class MyModuleForInstallation extends Module {
+
+  @override
+  configure() {
+    install(new MyModule());
+
+    register(MySingletonClass).toType(MySpecialSingletonClass2);
   }
 }
 
@@ -98,6 +118,31 @@ class MySpecialClass implements MyClass {
 
 class YourClass {
   String getName() => "YourClass";
+}
+
+class MySingletonClass {
+    static int instanceCounter = 1;
+
+    /// Remember the actual instance
+    final int instanceID;
+
+    MySingletonClass() : instanceID = instanceCounter {
+        instanceCounter++;
+    }
+
+    String getName() => "MySingletonClass - InstanceID: ${instanceID}";
+}
+
+class MySpecialSingletonClass extends MySingletonClass {
+    String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
+}
+
+class MySpecialSingletonClass2 extends MySingletonClass {
+    String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
+}
+
+class AnotherSingletonClass {
+    String getName() => "AnotherSingletonClass";
 }
 
 MyFunctionToInject() => "MyFunction";
