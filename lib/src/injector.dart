@@ -31,7 +31,7 @@ abstract class Injector {
   /** Get new instance of [type] with [name] (optional) and all dependencies resolved */
   dynamic getInstance(Type type, [String name]);
 
-  /** Resolve injetions in existing Object (does not create a new instance) */
+  /** Resolve injections in existing Object (does not create a new instance) */
   Object resolveInjections(Object obj);
 
   /** Get unmodifiable map of registrations */
@@ -66,7 +66,13 @@ class InjectorImpl implements Injector {
 
   Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
 
-  Registration _removeRegistrationFor(TypeMirror type, String name) => _registrations.remove(new TypeMirrorWrapper(type, name));
+  Registration _removeRegistrationFor(TypeMirror type, String name) {
+      final Registration registration = _registrations.remove(new TypeMirrorWrapper(type, name));
+
+      // Remove reference to our instance if there is one
+      registration._instance = null;
+      return registration;
+  }
 
   @override
   dynamic getInstance(Type type, [String name = null]) {
@@ -89,9 +95,25 @@ class InjectorImpl implements Injector {
     }
 
     var registration = _getRegistrationFor(tm, name);
+
+    // Check if we want a singleton
+    if(registration._asSingleton && registration._instance != null) {
+        // If we have one - return it
+        print("If we have one - return it");
+        return registration._instance;
+    }
+
     var obj = registration._builder();
+
     InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
-    return _resolveInjections(im);
+    final instance = _resolveInjections(im);
+
+    if(registration._asSingleton) {
+        // Remember the instance
+        print("Remember the instance");
+        registration._instance = instance;
+    }
+    return instance;
   }
 
   dynamic _resolveInjections(InstanceMirror im) {
@@ -146,7 +168,7 @@ class InjectorImpl implements Injector {
   Iterable<DeclarationMirror> injectableConstructors(ClassMirror classMirror) {
     var constructors = injectableDeclarations(classMirror).where(_isConstructor);
     if(constructors.isEmpty) {
-      // no excplit injectable constructor exists use the default constructor instead
+      // no explict injectable constructor exists use the default constructor instead
       constructors = classMirror.declarations.values.where((DeclarationMirror m) => _isConstructor(m) && (m as MethodMirror).parameters.isEmpty);
       if(constructors.isEmpty) {
         throw new StateError("no injectable constructors exists for ${classMirror}");
@@ -160,8 +182,11 @@ class InjectorImpl implements Injector {
       classMirror.declarations.values.where(_isInjectable);
 
   /** Returns true if [mirror] is annotated with [Inject] */
-  bool _isInjectable(DeclarationMirror mirror) =>
-      mirror.metadata.any((InstanceMirror im) => im.reflectee is Inject);
+  bool _isInjectable(DeclarationMirror mirror) {
+      return mirror.metadata.any((final InstanceMirror im) {
+          return im.reflectee is Inject;
+      });
+  }
 
   /** Returns true if [declaration] is a constructor */
   bool _isConstructor(DeclarationMirror declaration) => declaration is MethodMirror && declaration.isConstructor;
