@@ -4,20 +4,28 @@
 
 part of dice;
 
-/** Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
+/// Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
 class TypeMirrorWrapper {
-  final TypeMirror typeMirror;
-  final String name;
+    final TypeMirror typeMirror;
 
-  TypeMirrorWrapper(this.typeMirror, this.name);
+    final String name;
+    final TypeMirror annotationTypeMirror;
 
-  TypeMirrorWrapper.fromType(Type type, this.name) : typeMirror = reflectType(type);
+    TypeMirrorWrapper(this.typeMirror, this.name, this.annotationTypeMirror);
 
-  String get qualifiedName => symbolAsString(typeMirror.qualifiedName) + (name != null ? name : "");
+    TypeMirrorWrapper.fromType(final Type type, this.name, final Type annotation)
+        : typeMirror = reflectType(type),
+            annotationTypeMirror = annotation != null ? reflectType(annotation) : null;
 
-  get hashCode => qualifiedName.hashCode;
+    String get qualifiedName =>
+        symbolAsString(typeMirror.qualifiedName)
+            + (name != null ? "#$name" : "")
+            + (annotationTypeMirror != null
+                ? "#${symbolAsString(annotationTypeMirror.qualifiedName)}" : "");
 
-  bool operator ==(TypeMirrorWrapper other) => this.qualifiedName == other.qualifiedName;
+    get hashCode => qualifiedName.hashCode;
+
+    bool operator ==(TypeMirrorWrapper other) => this.qualifiedName == other.qualifiedName;
 }
 
 // helpers

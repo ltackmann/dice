@@ -6,10 +6,12 @@
 library dice;
 
 @MirrorsUsed(
-    metaTargets: const [ Inject ],
-    symbols: const ['inject', 'Named'])
+    metaTargets: const [ Inject, Injectable ],
+    symbols: const ['inject', 'injectable', 'Named'])
 import 'dart:mirrors';
 import 'dart:collection';
+
+import 'package:logging/logging.dart';
 
 part 'src/annotations.dart';
 part 'src/Registration.dart';

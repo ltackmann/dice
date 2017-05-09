@@ -14,8 +14,13 @@ class MyModule extends Module {
     // Singleton
     register(MySingletonClass).toType(MySpecialSingletonClass).asSingleton();
 
-//    // named
-    register(MyClass, "MySpecialClass").toType(MySpecialClass);
+    // named
+    register(MyClass, named: "MySpecialClass").toType(MySpecialClass);
+    register(String, named: "google").toInstance("http://www.google.com/");
+
+    // annotated
+    register(String,annotatedWidth: UrlGoogle ).toInstance("http://www.google.com/");
+    register(String,annotatedWidth: UrlFacebook ).toInstance("http://www.facebook.com/");
   }
 }
 
@@ -84,6 +89,18 @@ class MyClassToInject {
   // Map to trace injections from setters or constructors
   Map injections = new Map();
 
+  @inject
+  @Named("google")
+  String url1;
+
+  @inject
+  @UrlGoogle()
+  String url2;
+
+  @inject
+  @UrlFacebook()
+  String url3;
+
   bool assertInjections() {
     // constructors
     var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
@@ -94,13 +111,20 @@ class MyClassToInject {
     var namedVariablesToInject = (_namedVariableToInject != null && namedVariableToInject != null);
     var variablesInjected = variablesToInject && variablesNotToInject && namedVariablesToInject;
 
+    var stringInjectedByName = url1 != null && url1 == "http://www.google.com/";
+    var stringInjectedByAnnotation1 = url2 != null && url2 == "http://www.google.com/";
+    var stringInjectedByAnnotation2 = url3 != null && url3 == "http://www.facebook.com/";
+    //var stringInjectedByAnnotation1 = true;
+    //var stringInjectedByAnnotation2 = true;
+
     // setters
     // TODO && injections[r'_setterToInject'] != null
     var settersToInject = (injections[r'setterToInject'] != null);
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
 
-    return constructorsInjected && variablesInjected && settersInjected;
+    return constructorsInjected && variablesInjected && settersInjected && stringInjectedByName &&
+        stringInjectedByAnnotation1 && stringInjectedByAnnotation2;
   }
 }
 
@@ -124,7 +148,6 @@ class YourClass {
   String getName() => "YourClass";
 }
 
-//@Inject()
 class MySingletonClass {
     static int instanceCounter = 1;
 
@@ -157,4 +180,8 @@ class AnotherSingletonClass {
 class MetaTestClass extends MyClass {
     String getName() => "MetaTestClass";
 }
+
+// Class Annotations for URLs
+class UrlGoogle { const UrlGoogle(); }
+class UrlFacebook { const UrlFacebook(); }
 

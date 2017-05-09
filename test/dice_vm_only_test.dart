@@ -13,6 +13,8 @@ import 'dart:mirrors';
 import 'package:test/test.dart';
 import 'package:dice/dice.dart';
 
+import 'config.dart';
+
 class MyModule extends Module {
 
     configure() {
@@ -34,8 +36,11 @@ class MyClass {
     String getName() => "MyClass";
 }
 
+
 // These tests don't work in Chrome (compiled to JS)
 main() {
+    configLogging();
+
     group('injector -', () {
         final myModule = new MyModule();
         var injector = new Injector(myModule);
