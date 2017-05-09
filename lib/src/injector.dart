@@ -45,8 +45,9 @@ abstract class Injector {
     /// register a [type] with [named] (optional) to an implementation
     Registration register(Type type, { final String named = null, final Type annotatedWidth: null });
 
-    // Compatibility with di:package
-    //Registration bind(Type type, [String name]) => register(type,name);
+    /// Compatibility with di:package
+    Registration bind(Type type,  { final String named = null, final Type annotatedWidth: null })
+        => register(type,named: named, annotatedWidth: annotatedWidth);
 
     /** unregister a [type] and [named] (optional), returns [true] if registration has been removed*/
     bool unregister(Type type, { final String named: null, final Type annotatedWidth: null });
@@ -59,15 +60,17 @@ abstract class Injector {
 
     /** Get unmodifiable map of registrations */
     Map<TypeMirrorWrapper, Registration> get registrations;
+
+    Injector._private();
 }
 
 /// Implementation of [Injector].
-class InjectorImpl implements Injector {
+class InjectorImpl extends Injector {
     final Logger _logger = new Logger('dice.InjectorImpl');
 
     final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
 
-    InjectorImpl([module = null]) {
+    InjectorImpl([module = null]) : super._private() {
         if (module != null) {
             module.configure();
             _registrations.addAll(module._registrations);
