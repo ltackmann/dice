@@ -4,6 +4,26 @@
 
 part of dice;
 
+/// Helper for finding the right annotation
+class _Annotation {
+    final String name;
+    final Type type;
+
+    factory _Annotation.fromMirror(final InjectorImpl injector, final VariableMirror variable) {
+
+        // typed-Annotation has priority - if we have one ignore a named-Annotation
+        final InstanceMirror typedAnnotation = injector._injectionType(variable);
+        final Type annotation = typedAnnotation != null ? typedAnnotation.reflectee.runtimeType : null;
+
+        // Only if we have no typed-Annotation
+        final String name = typedAnnotation == null ? injector._injectionName(variable) : null;
+
+        return new _Annotation._private(name, annotation);
+    }
+
+    _Annotation._private(this.name, this.type);
+}
+
 /// Resolve types to their implementing classes
 abstract class Injector {
     factory Injector([Module module = null]) => new InjectorImpl(module);
@@ -41,7 +61,7 @@ abstract class Injector {
     Map<TypeMirrorWrapper, Registration> get registrations;
 }
 
-/** Implementation of [Injector]. */
+/// Implementation of [Injector].
 class InjectorImpl implements Injector {
     final Logger _logger = new Logger('dice.InjectorImpl');
 
@@ -139,9 +159,13 @@ class InjectorImpl implements Injector {
 
         // that has the greatest number of parameters to inject, optional included
         MethodMirror constructor = constructors.fold(null, (MethodMirror p, MethodMirror e) =>
-        p == null || _injectableParameters(p).length < _injectableParameters(e).length ? e : p);
+            p == null || _injectableParameters(p).length < _injectableParameters(e).length ? e : p);
 
-        var constructorArgs = constructor.parameters.map((pm) => _getInstanceFor(pm.type)).toList();
+        var constructorArgs = constructor.parameters.map((final ParameterMirror variable) {
+            final _Annotation _annotation = new _Annotation.fromMirror(this, variable);
+
+            return _getInstanceFor(variable.type, _annotation.name, _annotation.type);
+        }).toList();
 
         return classMirror.newInstance(constructor.constructorName, constructorArgs);
     }
@@ -159,14 +183,9 @@ class InjectorImpl implements Injector {
     InstanceMirror _injectVariables(InstanceMirror instanceMirror) {
         var variables = injectableVariables(instanceMirror.type);
         variables.forEach((variable) {
-            // typed-Annotation has priority - if we have one ignore a named-Annotation
-            final InstanceMirror typedAnnotation = _injectionType(variable);
-            final Type type = typedAnnotation != null ? typedAnnotation.reflectee.runtimeType : null;
+            final _Annotation _annotation = new _Annotation.fromMirror(this, variable);
 
-            // Only if we have no typed-Annotation
-            final String namedAnnotation = typedAnnotation == null ? _injectionName(variable) : null;
-
-            final instanceToInject = _getInstanceFor(variable.type, namedAnnotation, type);
+            final instanceToInject = _getInstanceFor(variable.type, _annotation.name, _annotation.type);
 
             // set the resolved injection on the instance mirror we are injecting into
             instanceMirror.setField(variable.simpleName, instanceToInject);
@@ -260,9 +279,11 @@ class InjectorImpl implements Injector {
     TypeMirror _firstParameter(MethodMirror method) =>
         method.parameters[0].type;
 
-    /** Returns parameters (including optional) that can be injected */
-    Iterable<ParameterMirror> _injectableParameters(MethodMirror method) =>
-        // TODO support named parameters
-    method.parameters.where((pm) => _hasRegistrationFor(pm.type, null, null));
+    /// Returns parameters (including optional) that can be injected
+    Iterable<ParameterMirror> _injectableParameters(final MethodMirror method) {
+        return method.parameters.where((final ParameterMirror pm) {
+            return _hasRegistrationFor(pm.type, null, null);
+        });
+    }
 
 }

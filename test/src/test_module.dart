@@ -47,7 +47,7 @@ class MyModuleForInstallation extends Module {
   }
 }
 
-@Inject()
+@Injectable()
 class MyClassToInject {
   // constructors
   @inject
@@ -133,17 +133,17 @@ class MyClass {
   String getName() => "MyClass";
 }
 
-@Inject()
+@Injectable()
 class MyOtherClass {
   String getName() => "MyOtherClass";
 }
 
-@Inject()
+@Injectable()
 class MySpecialClass implements MyClass {
   String getName() => "MySpecialClass";
 }
 
-@Inject()
+@Injectable()
 class YourClass {
   String getName() => "YourClass";
 }
@@ -161,24 +161,37 @@ class MySingletonClass {
     String getName() => "MySingletonClass - InstanceID: ${instanceID}";
 }
 
-@Inject()
+@Injectable()
 class MySpecialSingletonClass extends MySingletonClass {
     String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
 }
 
-@Inject()
+@Injectable()
 class MySpecialSingletonClass2 extends MySingletonClass {
     String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
 }
 
-@Inject()
+@Injectable()
 class AnotherSingletonClass {
     String getName() => "AnotherSingletonClass";
 }
 
-@Inject()
+@Injectable()
 class MetaTestClass extends MyClass {
     String getName() => "MetaTestClass";
+}
+
+@Injectable()
+class CTORInjection extends MyClass {
+    final String url;
+    final String lang;
+
+    @inject
+    CTORInjection(@UrlGoogle() final String this.url,@Named("language") final String language)
+        : lang = language;
+
+    @override
+    String getName() => "CTORInjection - $url ($lang)";
 }
 
 // Class Annotations for URLs

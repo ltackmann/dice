@@ -126,6 +126,17 @@ main() {
             expect(url,"http://www.google.com/");
         });
 
+        test('CTOR injection', () {
+            final ctorInjector = new Injector()
+                ..register(String,annotatedWidth: UrlGoogle ).toInstance("http://www.google.com/")
+                ..register(String,named: "language" ).toInstance("dart")
+                ..register(MyClass).toType(CTORInjection)
+            ;
+            final MyClass mc = ctorInjector.getInstance(MyClass);
+            expect(mc,isNotNull);
+            expect(mc.getName(),"CTORInjection - http://www.google.com/ (dart)");
+        }); // end of '' test
+
     });
 
     group('modules - ', () {
