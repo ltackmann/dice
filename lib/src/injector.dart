@@ -43,17 +43,17 @@ abstract class Injector {
     }
 
     /// register a [type] with [named] (optional) to an implementation
-    Registration register(Type type, { final String named = null, final Type annotatedWidth: null });
+    Registration register(Type type, { final String named = null, final Type annotatedWith: null });
 
     /// Compatibility with di:package
-    Registration bind(Type type,  { final String named = null, final Type annotatedWidth: null })
-        => register(type,named: named, annotatedWidth: annotatedWidth);
+    Registration bind(Type type,  { final String named = null, final Type annotatedWith: null })
+        => register(type,named: named, annotatedWith: annotatedWith);
 
     /** unregister a [type] and [named] (optional), returns [true] if registration has been removed*/
-    bool unregister(Type type, { final String named: null, final Type annotatedWidth: null });
+    bool unregister(Type type, { final String named: null, final Type annotatedWith: null });
 
     /** Get new instance of [type] with [named] (optional) and all dependencies resolved */
-    dynamic getInstance(Type type, { final String named: null, final Type annotatedWidth: null });
+    dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null });
 
     /** Resolve injections in existing Object (does not create a new instance) */
     Object resolveInjections(Object obj);
@@ -78,16 +78,16 @@ class InjectorImpl extends Injector {
     }
 
     @override
-    Registration register(Type type, { final String named: null, final Type annotatedWidth: null }) {
+    Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
         var registration = new Registration(type);
-        var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWidth);
+        var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
         _registrations[typeMirrorWrapper] = registration;
         return registration;
     }
 
     @override
-    bool unregister(Type type, { final String named: null, final Type annotatedWidth: null }) {
-        return _removeRegistrationFor(reflectType(type), named, annotatedWidth != null ? reflectType(type) : null) !=
+    bool unregister(Type type, { final String named: null, final Type annotatedWith: null }) {
+        return _removeRegistrationFor(reflectType(type), named, annotatedWith != null ? reflectType(type) : null) !=
             null;
     }
 
@@ -106,9 +106,9 @@ class InjectorImpl extends Injector {
     }
 
     @override
-    dynamic getInstance(Type type, { final String named: null, final Type annotatedWidth: null }) {
+    dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null }) {
         var typeMirror = reflectType(type);
-        return _getInstanceFor(typeMirror, named, annotatedWidth);
+        return _getInstanceFor(typeMirror, named, annotatedWith);
     }
 
     @override
@@ -120,13 +120,13 @@ class InjectorImpl extends Injector {
     @override
     Map<TypeMirrorWrapper, Registration> get registrations => new UnmodifiableMapView(_registrations);
 
-    dynamic _getInstanceFor(TypeMirror tm, [ final String named = null, final Type annotatedWidth = null ]) {
-        final annotationTypeMirror = annotatedWidth != null ? reflectType(annotatedWidth) : null;
+    dynamic _getInstanceFor(TypeMirror tm, [ final String named = null, final Type annotatedWith = null ]) {
+        final annotationTypeMirror = annotatedWith != null ? reflectType(annotatedWith) : null;
         if (!_hasRegistrationFor(tm, named, annotationTypeMirror)) {
             throw new ArgumentError(
                 "no instance registered for type ${symbolAsString(tm.simpleName)}, "
                     "named: $named, "
-                    "annotatedWith: $annotatedWidth");
+                    "annotatedWith: $annotatedWith");
         }
 
         var registration = _getRegistrationFor(tm, named, annotationTypeMirror);

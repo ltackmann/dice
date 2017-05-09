@@ -19,8 +19,8 @@ class MyModule extends Module {
     register(String, named: "google").toInstance("http://www.google.com/");
 
     // annotated
-    register(String,annotatedWidth: UrlGoogle ).toInstance("http://www.google.com/");
-    register(String,annotatedWidth: UrlFacebook ).toInstance("http://www.facebook.com/");
+    register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
+    register(String,annotatedWith: UrlFacebook ).toInstance("http://www.facebook.com/");
   }
 }
 

@@ -119,16 +119,16 @@ main() {
 
         test('annotatedWith', () {
             final annotationInjector = new Injector()
-                ..register(String,annotatedWidth: UrlGoogle ).toInstance("http://www.google.com/")
+                ..register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/")
             ;
 
-            final String url = annotationInjector.getInstance(String,annotatedWidth: UrlGoogle);
+            final String url = annotationInjector.getInstance(String,annotatedWith: UrlGoogle);
             expect(url,"http://www.google.com/");
         });
 
         test('CTOR injection', () {
             final ctorInjector = new Injector()
-                ..register(String,annotatedWidth: UrlGoogle ).toInstance("http://www.google.com/")
+                ..register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/")
                 ..register(String,named: "language" ).toInstance("dart")
                 ..register(MyClass).toType(CTORInjection)
             ;

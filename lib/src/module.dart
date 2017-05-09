@@ -9,9 +9,9 @@ abstract class Module {
     final Logger _logger = new Logger('dice.Module');
 
     /// register a [type] with [named] (optional) to an implementation
-    Registration register(Type type, { final String named: null, final Type annotatedWidth: null }) {
+    Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
         final registration = new Registration(type);
-        final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWidth);
+        final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
 
         _logger.fine("Register: ${typeMirrorWrapper.qualifiedName}");
         _registrations[typeMirrorWrapper] = registration;
@@ -19,8 +19,8 @@ abstract class Module {
     }
 
     /// Compatibility with di:package
-    Registration bind(final Type type, { final String named: null, final Type annotatedWidth: null }) =>
-        register(type, named: named, annotatedWidth: annotatedWidth);
+    Registration bind(final Type type, { final String named: null, final Type annotatedWith: null }) =>
+        register(type, named: named, annotatedWith: annotatedWith);
 
     /// Configure type/instance registrations used in this module
     configure();
