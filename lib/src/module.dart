@@ -8,7 +8,7 @@ part of dice;
 abstract class Module {
     final Logger _logger = new Logger('dice.Module');
 
-    ///  register a [type] with [named] (optional) to an implementation
+    /// register a [type] with [named] (optional) to an implementation
     Registration register(Type type, { final String named: null, final Type annotatedWidth: null }) {
         final registration = new Registration(type);
         final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWidth);
@@ -17,6 +17,10 @@ abstract class Module {
         _registrations[typeMirrorWrapper] = registration;
         return registration;
     }
+
+    /// Compatibility with di:package
+    Registration bind(final Type type, { final String named: null, final Type annotatedWidth: null }) =>
+        register(type, named: named, annotatedWidth: annotatedWidth);
 
     /// Configure type/instance registrations used in this module
     configure();
