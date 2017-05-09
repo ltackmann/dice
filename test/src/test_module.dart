@@ -5,17 +5,16 @@
 part of dice_test;
 
 class MyModule extends Module {
+
   configure() {
     register(MyClass).toInstance(new MyClass());
     register(MyOtherClass).toBuilder(() => new MyOtherClass());
     register(MyClassToInject);
-    register(MyFunction).toFunction(MyFunctionToInject);
-    register(MyClassFunction).toFunction(new MyClass().getName);
 
     // Singleton
     register(MySingletonClass).toType(MySpecialSingletonClass).asSingleton();
 
-    // named
+//    // named
     register(MyClass, "MySpecialClass").toType(MySpecialClass);
   }
 }
@@ -43,6 +42,7 @@ class MyModuleForInstallation extends Module {
   }
 }
 
+@Inject()
 class MyClassToInject {
   // constructors
   @inject
@@ -104,22 +104,27 @@ class MyClassToInject {
   }
 }
 
+//@Inject()
 class MyClass {
   String getName() => "MyClass";
 }
 
+@Inject()
 class MyOtherClass {
   String getName() => "MyOtherClass";
 }
 
+@Inject()
 class MySpecialClass implements MyClass {
   String getName() => "MySpecialClass";
 }
 
+@Inject()
 class YourClass {
   String getName() => "YourClass";
 }
 
+//@Inject()
 class MySingletonClass {
     static int instanceCounter = 1;
 
@@ -133,19 +138,23 @@ class MySingletonClass {
     String getName() => "MySingletonClass - InstanceID: ${instanceID}";
 }
 
+@Inject()
 class MySpecialSingletonClass extends MySingletonClass {
     String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
 }
 
+@Inject()
 class MySpecialSingletonClass2 extends MySingletonClass {
     String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
 }
 
+@Inject()
 class AnotherSingletonClass {
     String getName() => "AnotherSingletonClass";
 }
 
-MyFunctionToInject() => "MyFunction";
+@Inject()
+class MetaTestClass extends MyClass {
+    String getName() => "MetaTestClass";
+}
 
-typedef String MyFunction();
-typedef String MyClassFunction();

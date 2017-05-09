@@ -5,7 +5,9 @@
 /** Lightweight dependency injection framework for Dart. */
 library dice;
 
-@MirrorsUsed(symbols: const ['inject', 'Named'])
+@MirrorsUsed(
+    metaTargets: const [ Inject ],
+    symbols: const ['inject', 'Named'])
 import 'dart:mirrors';
 import 'dart:collection';
 
