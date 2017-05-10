@@ -36,6 +36,17 @@ class MyClass {
     String getName() => "MyClass";
 }
 
+@Injectable()
+class CTORInjectionWithDefaultParam extends MyClass {
+    final String lang;
+
+    @inject
+    CTORInjectionWithDefaultParam( { final String language: "Java" })
+        : lang = language;
+
+    @override
+    String getName() => "CTORInjectionWithDefaultParam - $lang";
+}
 
 // These tests don't work in Chrome (compiled to JS)
 main() {
@@ -55,6 +66,16 @@ main() {
             var func = injector.getInstance(MyClassFunction);
             expect(func, isNotNull);
             expect(func(), equals('MyClass'));
+        });
+
+
+        test('CTOR injection with default param', () {
+            final ctorInjector = new Injector()
+                ..register(MyClass).toType(CTORInjectionWithDefaultParam)
+            ;
+            final MyClass mc = ctorInjector.getInstance(MyClass);
+            expect(mc,isNotNull);
+            expect(mc.getName(),"CTORInjectionWithDefaultParam - Java");
         });
     });
 }

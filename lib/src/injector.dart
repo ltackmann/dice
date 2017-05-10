@@ -101,7 +101,7 @@ class InjectorImpl extends Injector {
         final Registration registration = _registrations.remove(new TypeMirrorWrapper(type, name, annotation));
 
         // Remove reference to our instance if there is one
-        registration._instance = null;
+        registration ?._instance = null;
         return registration;
     }
 
@@ -156,21 +156,31 @@ class InjectorImpl extends Injector {
     }
 
     /// create a new instance of classMirror and inject it
-    InstanceMirror _newInstance(ClassMirror classMirror) {
+    InstanceMirror _newInstance(final ClassMirror classMirror) {
         // Look for an injectable constructor
         var constructors = injectableConstructors(classMirror).toList();
 
         // that has the greatest number of parameters to inject, optional included
-        MethodMirror constructor = constructors.fold(null, (MethodMirror p, MethodMirror e) =>
-            p == null || _injectableParameters(p).length < _injectableParameters(e).length ? e : p);
+        MethodMirror constructor = constructors.fold(null,
+                (MethodMirror previous, MethodMirror element) =>
+                    previous == null
+                        || _injectableParameters(previous).length < _injectableParameters(element).length
+                            ? element : previous);
 
-        var constructorArgs = constructor.parameters.map((final ParameterMirror variable) {
-            final _Annotation _annotation = new _Annotation.fromMirror(this, variable);
-
-            return _getInstanceFor(variable.type, _annotation.name, _annotation.type);
+        final positionalArguments = constructor.parameters
+            .where((final ParameterMirror param) => !param.hasDefaultValue)
+                .map((final ParameterMirror param) {
+                    final _Annotation _annotation = new _Annotation.fromMirror(this, param);
+                    return _getInstanceFor(param.type, _annotation.name, _annotation.type);
         }).toList();
 
-        return classMirror.newInstance(constructor.constructorName, constructorArgs);
+        final namedArguments = new Map<Symbol, dynamic>();
+        constructor.parameters
+            .where((final ParameterMirror param) => param.hasDefaultValue)
+                .forEach((final ParameterMirror param)
+                    => namedArguments[param.simpleName] = param.defaultValue.reflectee);
+
+        return classMirror.newInstance(constructor.constructorName, positionalArguments, namedArguments);
     }
 
     InstanceMirror _injectSetters(InstanceMirror instanceMirror) {

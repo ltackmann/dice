@@ -100,13 +100,12 @@ main() {
 
         test('asSingleton III', () {
             final sInjector = new Injector()
-                ..register(MySingletonClass).asSingleton();
+                ..unregister(AnotherSingletonClass)
+                ..register(AnotherSingletonClass).asSingleton();
 
-            final MySingletonClass singleton1 = sInjector.getInstance(MySingletonClass);
-            final MySingletonClass singleton2 = sInjector.getInstance(MySingletonClass);
+            final AnotherSingletonClass singleton1 = sInjector.getInstance(AnotherSingletonClass);
+            final AnotherSingletonClass singleton2 = sInjector.getInstance(AnotherSingletonClass);
 
-            expect(singleton1.instanceID, 1);
-            expect(singleton2.instanceID, 1);
             expect(singleton1.hashCode, singleton2.hashCode);
         }); // end of '' test
 
@@ -147,7 +146,7 @@ main() {
             final MyClass mc = ctorInjector.getInstance(MyClass);
             expect(mc,isNotNull);
             expect(mc.getName(),"CTORInjection - http://www.google.com/ (dart)");
-        }); // end of '' test
+        });
 
     });
 
