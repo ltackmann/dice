@@ -98,6 +98,18 @@ main() {
             expect(instances[0].hashCode, instances[1].hashCode);
         }); // end of 'asSingleton' test
 
+        test('asSingleton III', () {
+            final sInjector = new Injector()
+                ..register(MySingletonClass).asSingleton();
+
+            final MySingletonClass singleton1 = sInjector.getInstance(MySingletonClass);
+            final MySingletonClass singleton2 = sInjector.getInstance(MySingletonClass);
+
+            expect(singleton1.instanceID, 1);
+            expect(singleton2.instanceID, 1);
+            expect(singleton1.hashCode, singleton2.hashCode);
+        }); // end of '' test
+
         test('MultiModule', () {
             final myMultiModule = new MyModuleForInstallation();
             var multiInjector = new Injector(myMultiModule);

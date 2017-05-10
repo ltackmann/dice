@@ -49,16 +49,16 @@ abstract class Injector {
     Registration bind(Type type,  { final String named = null, final Type annotatedWith: null })
         => register(type,named: named, annotatedWith: annotatedWith);
 
-    /** unregister a [type] and [named] (optional), returns [true] if registration has been removed*/
+    /// unregister a [type] and [named] (optional), returns [true] if registration has been removed
     bool unregister(Type type, { final String named: null, final Type annotatedWith: null });
 
-    /** Get new instance of [type] with [named] (optional) and all dependencies resolved */
+    /// Get new instance of [type] with [named] (optional) and all dependencies resolved
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null });
 
-    /** Resolve injections in existing Object (does not create a new instance) */
+    /// Resolve injections in existing Object (does not create a new instance)
     Object resolveInjections(Object obj);
 
-    /** Get unmodifiable map of registrations */
+    /// Get unmodifiable map of registrations
     Map<TypeMirrorWrapper, Registration> get registrations;
 
     Injector._private();
