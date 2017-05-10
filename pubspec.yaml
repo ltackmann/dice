@@ -3,8 +3,17 @@ version: 1.6.5
 author: Lars Tackmann <lars@solvr.io>
 description: Lightweight dependency injection framework for Dart.
 homepage: https://github.com/ltackmann/dice
+
 environment:
   sdk: '>=1.9.0 <2.0.0'
+
 dependencies:
+  logging: ^0.11.0
+
 dev_dependencies:
+  browser: ^0.10.0
+
+  logging_handlers: ^0.8.0
+  console_log_handler: ^0.2.0
+
   test: any

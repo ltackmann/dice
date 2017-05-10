@@ -4,13 +4,19 @@
 
 part of dice;
 
-/** Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values */
+/// Used to annotate constructors, methods and fields of your classes where [Injector] should resolve values
 const inject = const Inject();
 class Inject {
   const Inject();
 }
 
-/** Used in conjunction with [Inject] to select a specific named target for injection */
+/// Compatibility to di-package
+const injectable = const Injectable();
+class Injectable {
+    const Injectable();
+}
+
+/// Used in conjunction with [Inject] to select a specific named target for injection
 class Named {
   const Named(this.name);
 

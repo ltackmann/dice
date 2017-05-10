@@ -5,9 +5,13 @@
 /** Lightweight dependency injection framework for Dart. */
 library dice;
 
-@MirrorsUsed(symbols: const ['inject', 'Named'])
+@MirrorsUsed(
+    metaTargets: const [ Inject, Injectable ],
+    symbols: const ['inject', 'injectable', 'Named'])
 import 'dart:mirrors';
 import 'dart:collection';
+
+import 'package:logging/logging.dart';
 
 part 'src/annotations.dart';
 part 'src/Registration.dart';

@@ -6,14 +6,21 @@ part of dice;
 
 /// Associates types with their concrete instances returned by the [Injector]
 abstract class Module {
-    
-    ///  register a [type] with [name] (optional) to an implementation
-    Registration register(Type type, [String name = null]) {
-        var registration = new Registration(type);
-        var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, name);
+    final Logger _logger = new Logger('dice.Module');
+
+    /// register a [type] with [named] (optional) to an implementation
+    Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
+        final registration = new Registration(type);
+        final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
+
+        _logger.fine("Register: ${typeMirrorWrapper.qualifiedName}");
         _registrations[typeMirrorWrapper] = registration;
         return registration;
     }
+
+    /// Compatibility with di:package
+    Registration bind(final Type type, { final String named: null, final Type annotatedWith: null }) =>
+        register(type, named: named, annotatedWith: annotatedWith);
 
     /// Configure type/instance registrations used in this module
     configure();
@@ -25,10 +32,11 @@ abstract class Module {
         _registrations.addAll(module._registrations);
     }
 
-    bool _hasRegistrationFor(TypeMirror type, String name) =>
-        _registrations.containsKey(new TypeMirrorWrapper(type, name));
+    bool _hasRegistrationFor(TypeMirror type, String name, TypeMirror annotation) =>
+        _registrations.containsKey(new TypeMirrorWrapper(type, name, annotation));
 
-    Registration _getRegistrationFor(TypeMirror type, String name) => _registrations[new TypeMirrorWrapper(type, name)];
+    Registration _getRegistrationFor(TypeMirror type, String name, TypeMirror annotation) =>
+        _registrations[new TypeMirrorWrapper(type, name, annotation)];
 
     final Map<TypeMirrorWrapper, Registration> _registrations = new Map<TypeMirrorWrapper, Registration>();
 }

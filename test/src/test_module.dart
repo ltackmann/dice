@@ -5,18 +5,22 @@
 part of dice_test;
 
 class MyModule extends Module {
+
   configure() {
     register(MyClass).toInstance(new MyClass());
     register(MyOtherClass).toBuilder(() => new MyOtherClass());
     register(MyClassToInject);
-    register(MyFunction).toFunction(MyFunctionToInject);
-    register(MyClassFunction).toFunction(new MyClass().getName);
 
     // Singleton
     register(MySingletonClass).toType(MySpecialSingletonClass).asSingleton();
 
     // named
-    register(MyClass, "MySpecialClass").toType(MySpecialClass);
+    register(MyClass, named: "MySpecialClass").toType(MySpecialClass);
+    register(String, named: "google").toInstance("http://www.google.com/");
+
+    // annotated
+    register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
+    register(String,annotatedWith: UrlFacebook ).toInstance("http://www.facebook.com/");
   }
 }
 
@@ -43,6 +47,7 @@ class MyModuleForInstallation extends Module {
   }
 }
 
+@Injectable()
 class MyClassToInject {
   // constructors
   @inject
@@ -84,6 +89,18 @@ class MyClassToInject {
   // Map to trace injections from setters or constructors
   Map injections = new Map();
 
+  @inject
+  @Named("google")
+  String url1;
+
+  @inject
+  @UrlGoogle()
+  String url2;
+
+  @inject
+  @UrlFacebook()
+  String url3;
+
   bool assertInjections() {
     // constructors
     var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
@@ -94,28 +111,39 @@ class MyClassToInject {
     var namedVariablesToInject = (_namedVariableToInject != null && namedVariableToInject != null);
     var variablesInjected = variablesToInject && variablesNotToInject && namedVariablesToInject;
 
+    var stringInjectedByName = url1 != null && url1 == "http://www.google.com/";
+    var stringInjectedByAnnotation1 = url2 != null && url2 == "http://www.google.com/";
+    var stringInjectedByAnnotation2 = url3 != null && url3 == "http://www.facebook.com/";
+    //var stringInjectedByAnnotation1 = true;
+    //var stringInjectedByAnnotation2 = true;
+
     // setters
     // TODO && injections[r'_setterToInject'] != null
     var settersToInject = (injections[r'setterToInject'] != null);
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
 
-    return constructorsInjected && variablesInjected && settersInjected;
+    return constructorsInjected && variablesInjected && settersInjected && stringInjectedByName &&
+        stringInjectedByAnnotation1 && stringInjectedByAnnotation2;
   }
 }
 
+//@Inject()
 class MyClass {
   String getName() => "MyClass";
 }
 
+@Injectable()
 class MyOtherClass {
   String getName() => "MyOtherClass";
 }
 
+@Injectable()
 class MySpecialClass implements MyClass {
   String getName() => "MySpecialClass";
 }
 
+@Injectable()
 class YourClass {
   String getName() => "YourClass";
 }
@@ -133,19 +161,40 @@ class MySingletonClass {
     String getName() => "MySingletonClass - InstanceID: ${instanceID}";
 }
 
+@Injectable()
 class MySpecialSingletonClass extends MySingletonClass {
     String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
 }
 
+@Injectable()
 class MySpecialSingletonClass2 extends MySingletonClass {
     String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
 }
 
+@Injectable()
 class AnotherSingletonClass {
     String getName() => "AnotherSingletonClass";
 }
 
-MyFunctionToInject() => "MyFunction";
+@Injectable()
+class MetaTestClass extends MyClass {
+    String getName() => "MetaTestClass";
+}
 
-typedef String MyFunction();
-typedef String MyClassFunction();
+@Injectable()
+class CTORInjection extends MyClass {
+    final String url;
+    final String lang;
+
+    @inject
+    CTORInjection(@UrlGoogle() final String this.url,@Named("language") final String language)
+        : lang = language;
+
+    @override
+    String getName() => "CTORInjection - $url ($lang)";
+}
+
+// Class Annotations for URLs
+class UrlGoogle { const UrlGoogle(); }
+class UrlFacebook { const UrlFacebook(); }
+
