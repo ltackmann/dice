@@ -49,7 +49,8 @@ class ExampleModule extends Module {
 import "package:dice/dice.dart";
 main() {
 	var injector = new Injector(new ExampleModule());
-	var billingService = injector.getInstance(BillingService);
+
+  var billingService = injector.getInstance(BillingService);
 	var creditCard = new CreditCard("VISA");
 	var order = new Order("Dart: Up and Running");
 	billingService.chargeOrder(order, creditCard);
@@ -59,15 +60,15 @@ main() {
 for more information see the full example [here](example/example_app.dart).
 
 ## Dependency Injection with Dice
-You can use the **@injectable** annotation to mark objects and functions for injection the following ways:
+You can use the **@inject** annotation to mark objects and functions for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
 class MyOtherClass {
-  @injectable
+  @inject
   SomeClass field;
 
-  @injectable
+  @inject
   SomeOtherClass _privateField;
 }
 ```
@@ -75,7 +76,7 @@ class MyOtherClass {
  * Injection of constructor parameters
 ```dart
 class MyClass {
-  @injectable
+  @inject
   MyClass(this.field);
 
   MyOtherClass field;
@@ -85,10 +86,10 @@ class MyClass {
  * Injection of public and private setters
 ```dart
 class SomeClass {
-  @injectable
+  @inject
   set value(SomeOtherClass val) => _privateValue = val;
 
-  @injectable
+  @inject
   set _value(SomeOtherClass val) => _anotherPrivateValue = val;
 
   SomeOtherClass _privateValue, _anotherPrivateValue;
@@ -125,11 +126,11 @@ register(MyType).toBuilder(() => new MyType())
 
 ## Named Injections
 Dice supports named injections by using the **@Named** annotation. Currently this annotation
-works everywhere the **@injectable** annotation works.
+works everywhere the **@inject** annotation works.
 
 ```dart
 class MyClass {
-  @injectable
+  @inject
   @Named('my-special-implementation')
   SomeClass _someClass;
 }
@@ -143,7 +144,7 @@ register(MyType, "my-name").toType(MyTypeImpl)
 
 
 ## Advanced Features
- * **Get instances directly** Instead of using the **@injectable** for injections you can use the injectors **getInstance** method.
+ * **Get instances directly** Instead of using the **@inject** for injections you can use the injectors **getInstance** method.
 ```dart
 MyClass instance = injector.getInstance(MyClass);
 ```
