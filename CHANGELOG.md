@@ -1,5 +1,8 @@
 #### 1.7.0
-* Remove dependency on meta package
+* Singleton binding added, Module-installation added
+* Use type annotations
+* Make Named annotations work
+* Add bind method to support
 
 #### 1.6.5
 * Remove dependency on meta package
