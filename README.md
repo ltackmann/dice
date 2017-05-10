@@ -5,10 +5,10 @@
 Lightweight dependency injection framework for Dart.
 
 ## Getting Started
-Dice consists of two parts. 
+Dice consists of two parts.
  * **Modules** containing your class registrations.
- * **Injectors** that uses the **Module** to inject instances into your code. 
- 
+ * **Injectors** that uses the **Module** to inject instances into your code.
+
 The following example should get you startd:
 
 **1.** Add the *Dice* to your **pubspec.yaml** and run **pub install**
@@ -20,9 +20,9 @@ dependencies:
 **2.** Create some classes and interfaces to inject
 ```dart
 class BillingServiceImpl implements BillingService {
-  @inject
+
   CreditProcessor _processor;
-  
+
   Receipt chargeOrder(Order order, CreditCard creditCard) {
     if(!_processor.validate(creditCard)) {
       throw new ArgumentError("payment method not accepted");
@@ -58,37 +58,37 @@ main() {
 
 for more information see the full example [here](example/example_app.dart).
 
-## Dependency Injection with Dice 
-You can use the **@inject** annotation to mark objects and functions for injection the following ways:
+## Dependency Injection with Dice
+You can use the **@injectable** annotation to mark objects and functions for injection the following ways:
 
  * Injection of public and private fields (object/instance variables)
 ```dart
 class MyOtherClass {
-  @inject
+  @injectable
   SomeClass field;
-  
-  @inject
+
+  @injectable
   SomeOtherClass _privateField;
 }
 ```
-  
- * Injection of constructor parameters 
-```dart 
+
+ * Injection of constructor parameters
+```dart
 class MyClass {
-  @inject
+  @injectable
   MyClass(this.field);
 
   MyOtherClass field;
 }
 ```
- 
- * Injection of public and private setters 
+
+ * Injection of public and private setters
 ```dart
 class SomeClass {
-  @inject
+  @injectable
   set value(SomeOtherClass val) => _privateValue = val;
-  	
-  @inject
+
+  @injectable
   set _value(SomeOtherClass val) => _anotherPrivateValue = val;
 
   SomeOtherClass _privateValue, _anotherPrivateValue;
@@ -120,22 +120,22 @@ register(MyTypedef).toFunction(function)
  * register **MyType** to function that can build instances of it
 ```dart
 register(MyType).toBuilder(() => new MyType())
-``` 
+```
 
 
 ## Named Injections
-Dice supports named injections by using the **@Named** annotation. Currently this annotation 
-works everywhere the **@inject** annotation works, except for constructors. 
+Dice supports named injections by using the **@Named** annotation. Currently this annotation
+works everywhere the **@injectable** annotation works.
 
 ```dart
 class MyClass {
-  @inject
+  @injectable
   @Named('my-special-implementation')
   SomeClass _someClass;
 }
 ```
 
-The configuration is as before except you now provide an additional **name** paramater.
+The configuration is as before except you now provide an additional **name** parameter.
 
 ```dart
 register(MyType, "my-name").toType(MyTypeImpl)
@@ -143,38 +143,38 @@ register(MyType, "my-name").toType(MyTypeImpl)
 
 
 ## Advanced Features
- * **Get instances directly** Instead of using the **@inject** annotation to resolve injections you can use the injectors **getInstance** method.
+ * **Get instances directly** Instead of using the **@injectable** for injections you can use the injectors **getInstance** method.
 ```dart
 MyClass instance = injector.getInstance(MyClass);
 ```
 
- * **Get named instances directly** Instead of using the **@Named** annotation to resolve named injections you can use the injectors **getInstance** method with its **name** parameter. 
+ * **Get named instances directly** Instead of using the **@Named** for named injections you can use the injectors **getInstance** method with its **name** parameter.
 ```dart
 MyType instance = injector.getInstance(MyType, "my-name");
 ```
 
- * **To register and resole configuration values** You can use named registrations to inject configuration values into your application.
+ * **Injecting configuration values** You can use named registrations to inject configuration values into your application.
 ```dart
 class TestModule extends Module {
-  	configure() {
+  configure() {
 		register(String, "web-service-host").toInstace("http://test-service.name");
 	}
 }
 
 // application code
 String get webServiceHost => injector.getInstance(String, "web-service-host");
-``` 
+```
 
  * **Registering dependencies at runtime** You can register dependencies at runtime directly on the **Injector**.
 ```dart
  injector.register(User).toInstance(user);
  var user = injector.getInstance(User);
-``` 
+```
 
  * **Unregistering dependencies at runtime** You can unregister dependencies at runtime using the **unregister** method on the **Injector**.
 ```dart
 injector.unregister(User);
-``` 
+```
 
  * **Using multiple modules** You can compose modules using the **Injector.fromModules** constructor.
 ```dart
@@ -194,7 +194,7 @@ var injector = new Injector.fromModules([new MyModule(), new YourModule()]);
 var myClass = injector.getInstance(MyClass);
 var yourClass = injector.getInstance(YourClass);
 ```
- 
+
  * **Joining injectors** You can join multiple injector instances to one using the **Injector.fromInjectors** constructor.
 ```dart
 var myInjector = new Injector();
@@ -207,4 +207,3 @@ var injector = new Injector.fromInjectors([myInjector, yourInjector]);
 var myClass = injector.getInstance(MyClass);
 var yourClass = injector.getInstance(YourClass);
 ```
- 
