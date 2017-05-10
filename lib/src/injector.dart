@@ -46,6 +46,7 @@ abstract class Injector {
     Registration register(Type type, { final String named = null, final Type annotatedWith: null });
 
     /// Compatibility with di:package
+    /// see [register]
     Registration bind(Type type,  { final String named = null, final Type annotatedWith: null })
         => register(type,named: named, annotatedWith: annotatedWith);
 
@@ -54,6 +55,11 @@ abstract class Injector {
 
     /// Get new instance of [type] with [named] (optional) and all dependencies resolved
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null });
+
+    /// Compatibility with di:package
+    /// see [getInstance]
+    dynamic get(Type type, { final String named: null, final Type annotatedWith: null })
+        => getInstance(type,named: named, annotatedWith: annotatedWith);
 
     /// Resolve injections in existing Object (does not create a new instance)
     Object resolveInjections(Object obj);
