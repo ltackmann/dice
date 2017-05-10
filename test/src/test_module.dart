@@ -194,6 +194,19 @@ class CTORInjection extends MyClass {
     String getName() => "CTORInjection - $url ($lang)";
 }
 
+@Injectable()
+class CTOROptionalInjection extends MyClass {
+    final String url;
+    final String lang;
+
+    @inject
+    CTOROptionalInjection(@UrlGoogle() final String this.url,[ final String language ])
+        : lang = language ?? "C++";
+
+    @override
+    String getName() => "CTORInjection - $url ($lang)";
+}
+
 // Class Annotations for URLs
 class UrlGoogle { const UrlGoogle(); }
 class UrlFacebook { const UrlFacebook(); }

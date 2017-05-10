@@ -148,6 +148,16 @@ main() {
             expect(mc.getName(),"CTORInjection - http://www.google.com/ (dart)");
         });
 
+        test('CTOR injection - optional param', () {
+            final ctorInjector = new Injector()
+                ..register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/")
+                ..register(MyClass).toType(CTOROptionalInjection)
+            ;
+            final MyClass mc = ctorInjector.getInstance(MyClass);
+            expect(mc,isNotNull);
+            expect(mc.getName(),"CTORInjection - http://www.google.com/ (C++)");
+        });
+
     });
 
     group('modules - ', () {

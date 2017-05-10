@@ -168,7 +168,7 @@ class InjectorImpl extends Injector {
                             ? element : previous);
 
         final positionalArguments = constructor.parameters
-            .where((final ParameterMirror param) => !param.hasDefaultValue)
+            .where((final ParameterMirror param) => !param.hasDefaultValue && !param.isOptional)
                 .map((final ParameterMirror param) {
                     final _Annotation _annotation = new _Annotation.fromMirror(this, param);
                     return _getInstanceFor(param.type, _annotation.name, _annotation.type);
@@ -176,7 +176,7 @@ class InjectorImpl extends Injector {
 
         final namedArguments = new Map<Symbol, dynamic>();
         constructor.parameters
-            .where((final ParameterMirror param) => param.hasDefaultValue)
+            .where((final ParameterMirror param) => param.hasDefaultValue && !param.isOptional)
                 .forEach((final ParameterMirror param)
                     => namedArguments[param.simpleName] = param.defaultValue.reflectee);
 
