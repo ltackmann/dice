@@ -1,13 +1,16 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
 part of dice;
 
+/// Function that builds instance of a bound types
+typedef dynamic TypeBuilder();
+
 /// Registration between a [Type] and its instance creation.
 class Registration {
 
-    /// Create Registration defaulting to [type] */
+    /// Create Registration defaulting to [type]
     Registration(Type type) {
         toType(type);
     }
@@ -58,5 +61,4 @@ class Registration {
     var _instance = null;
 }
 
-/** Function that builds instance of a bound types */
-typedef dynamic TypeBuilder();
+

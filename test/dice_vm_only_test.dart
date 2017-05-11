@@ -23,20 +23,21 @@ class MyModule extends Module {
     }
 }
 
-@Inject()
+@injectable
 MyFunctionToInject() => "MyFunction";
 
-@Inject()
+@injectable
 typedef String MyFunction();
 
-@Inject()
+@injectable
 typedef String MyClassFunction();
 
+@injectable
 class MyClass {
     String getName() => "MyClass";
 }
 
-@Injectable()
+@injectable
 class CTORInjectionWithDefaultParam extends MyClass {
     final String lang;
 

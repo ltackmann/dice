@@ -1,8 +1,10 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
 part of dice;
+
+final Logger _logger = new Logger('dice._validate');
 
 /// Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
 class TypeMirrorWrapper {
@@ -32,3 +34,18 @@ class TypeMirrorWrapper {
 String symbolAsString(Symbol symbol) => MirrorSystem.getName(symbol);
 
 Symbol stringAsSymbol(String string) => new Symbol(string);
+
+bool isInjectable(final Type type) {
+    return reflectType(type).metadata.contains(reflect(injectable));
+}
+
+/// Makes some basic validation checks.
+/// if [codition] is false an [ArgumentError] is thrown
+/// 
+/// [assert] does not work for this because it is always off by default
+/// See: https://github.com/dart-lang/pub/issues/932
+void _validate(final bool condition,final String message) {
+    if(!condition) {
+        throw new ArgumentError(message);
+    }
+}

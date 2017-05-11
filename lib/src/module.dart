@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
@@ -10,6 +10,12 @@ abstract class Module {
 
     /// register a [type] with [named] (optional) to an implementation
     Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_REGISTER_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
         final registration = new Registration(type);
         final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
 

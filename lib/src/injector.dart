@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
@@ -85,16 +85,24 @@ class InjectorImpl extends Injector {
 
     @override
     Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_REGISTER_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
         var registration = new Registration(type);
         var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
         _registrations[typeMirrorWrapper] = registration;
+
         return registration;
     }
 
     @override
     bool unregister(Type type, { final String named: null, final Type annotatedWith: null }) {
-        return _removeRegistrationFor(reflectType(type), named, annotatedWith != null ? reflectType(type) : null) !=
-            null;
+        
+        return _removeRegistrationFor(reflectType(type), named, annotatedWith != null
+            ? reflectType(type) : null) != null;
     }
 
     bool _hasRegistrationFor(TypeMirror type, String name, TypeMirror annotation) =>
@@ -113,6 +121,12 @@ class InjectorImpl extends Injector {
 
     @override
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null }) {
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_GET_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_GET_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
         var typeMirror = reflectType(type);
         return _getInstanceFor(typeMirror, named, annotatedWith);
     }
@@ -135,7 +149,7 @@ class InjectorImpl extends Injector {
                     "annotatedWith: $annotatedWith");
         }
 
-        var registration = _getRegistrationFor(tm, named, annotationTypeMirror);
+        final registration = _getRegistrationFor(tm, named, annotationTypeMirror);
 
         // Check if we want a singleton
         if (registration._asSingleton && registration._instance != null) {
@@ -143,7 +157,7 @@ class InjectorImpl extends Injector {
             return registration._instance;
         }
 
-        var obj = registration._builder();
+        final obj = registration._builder();
 
         InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
         final instance = _resolveInjections(im);
