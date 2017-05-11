@@ -39,6 +39,10 @@ class Registration {
         return this;
     }
 
+    /// Most common way to register something.
+    /// This is a shortcut to [toType]
+    Registration to(Type type) => toType(type);
+
     /// Create only one instance
     void asSingleton() {
         _asSingleton = true;
