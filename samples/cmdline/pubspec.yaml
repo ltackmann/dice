@@ -1,0 +1,20 @@
+name: dice_sample_cmdline
+version: 0.1.0
+author: Mike Mitterer <office@mikemitterer.at>
+description: Dice-Test on the cmdline
+homepage: https://github.com/ltackmann/dice
+
+environment:
+  sdk: '>=1.9.0 <2.0.0'
+
+dependencies:
+  dice:
+    path: ../..
+    
+dev_dependencies:
+  browser: ^0.10.0
+
+  logging_handlers: ^0.8.0
+  console_log_handler: ^0.2.0
+
+  test: any
