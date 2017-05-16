@@ -1,4 +1,4 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
@@ -46,19 +46,25 @@ abstract class Injector {
     Registration register(Type type, { final String named = null, final Type annotatedWith: null });
 
     /// Compatibility with di:package
+    /// see [register]
     Registration bind(Type type,  { final String named = null, final Type annotatedWith: null })
         => register(type,named: named, annotatedWith: annotatedWith);
 
-    /** unregister a [type] and [named] (optional), returns [true] if registration has been removed*/
+    /// unregister a [type] and [named] (optional), returns [true] if registration has been removed
     bool unregister(Type type, { final String named: null, final Type annotatedWith: null });
 
-    /** Get new instance of [type] with [named] (optional) and all dependencies resolved */
+    /// Get new instance of [type] with [named] (optional) and all dependencies resolved
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null });
 
-    /** Resolve injections in existing Object (does not create a new instance) */
+    /// Compatibility with di:package
+    /// see [getInstance]
+    dynamic get(Type type, { final String named: null, final Type annotatedWith: null })
+        => getInstance(type,named: named, annotatedWith: annotatedWith);
+
+    /// Resolve injections in existing Object (does not create a new instance)
     Object resolveInjections(Object obj);
 
-    /** Get unmodifiable map of registrations */
+    /// Get unmodifiable map of registrations
     Map<TypeMirrorWrapper, Registration> get registrations;
 
     Injector._private();
@@ -79,16 +85,24 @@ class InjectorImpl extends Injector {
 
     @override
     Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_REGISTER_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
         var registration = new Registration(type);
         var typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
         _registrations[typeMirrorWrapper] = registration;
+
         return registration;
     }
 
     @override
     bool unregister(Type type, { final String named: null, final Type annotatedWith: null }) {
-        return _removeRegistrationFor(reflectType(type), named, annotatedWith != null ? reflectType(type) : null) !=
-            null;
+        
+        return _removeRegistrationFor(reflectType(type), named, annotatedWith != null
+            ? reflectType(type) : null) != null;
     }
 
     bool _hasRegistrationFor(TypeMirror type, String name, TypeMirror annotation) =>
@@ -101,12 +115,18 @@ class InjectorImpl extends Injector {
         final Registration registration = _registrations.remove(new TypeMirrorWrapper(type, name, annotation));
 
         // Remove reference to our instance if there is one
-        registration._instance = null;
+        registration ?._instance = null;
         return registration;
     }
 
     @override
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null }) {
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_GET_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_GET_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
         var typeMirror = reflectType(type);
         return _getInstanceFor(typeMirror, named, annotatedWith);
     }
@@ -129,7 +149,7 @@ class InjectorImpl extends Injector {
                     "annotatedWith: $annotatedWith");
         }
 
-        var registration = _getRegistrationFor(tm, named, annotationTypeMirror);
+        final registration = _getRegistrationFor(tm, named, annotationTypeMirror);
 
         // Check if we want a singleton
         if (registration._asSingleton && registration._instance != null) {
@@ -137,7 +157,7 @@ class InjectorImpl extends Injector {
             return registration._instance;
         }
 
-        var obj = registration._builder();
+        final obj = registration._builder();
 
         InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
         final instance = _resolveInjections(im);
@@ -156,21 +176,31 @@ class InjectorImpl extends Injector {
     }
 
     /// create a new instance of classMirror and inject it
-    InstanceMirror _newInstance(ClassMirror classMirror) {
+    InstanceMirror _newInstance(final ClassMirror classMirror) {
         // Look for an injectable constructor
         var constructors = injectableConstructors(classMirror).toList();
 
         // that has the greatest number of parameters to inject, optional included
-        MethodMirror constructor = constructors.fold(null, (MethodMirror p, MethodMirror e) =>
-            p == null || _injectableParameters(p).length < _injectableParameters(e).length ? e : p);
+        MethodMirror constructor = constructors.fold(null,
+                (MethodMirror previous, MethodMirror element) =>
+                    previous == null
+                        || _injectableParameters(previous).length < _injectableParameters(element).length
+                            ? element : previous);
 
-        var constructorArgs = constructor.parameters.map((final ParameterMirror variable) {
-            final _Annotation _annotation = new _Annotation.fromMirror(this, variable);
-
-            return _getInstanceFor(variable.type, _annotation.name, _annotation.type);
+        final positionalArguments = constructor.parameters
+            .where((final ParameterMirror param) => !param.hasDefaultValue && !param.isOptional)
+                .map((final ParameterMirror param) {
+                    final _Annotation _annotation = new _Annotation.fromMirror(this, param);
+                    return _getInstanceFor(param.type, _annotation.name, _annotation.type);
         }).toList();
 
-        return classMirror.newInstance(constructor.constructorName, constructorArgs);
+        final namedArguments = new Map<Symbol, dynamic>();
+        constructor.parameters
+            .where((final ParameterMirror param) => param.hasDefaultValue && !param.isOptional)
+                .forEach((final ParameterMirror param)
+                    => namedArguments[param.simpleName] = param.defaultValue.reflectee);
+
+        return classMirror.newInstance(constructor.constructorName, positionalArguments, namedArguments);
     }
 
     InstanceMirror _injectSetters(InstanceMirror instanceMirror) {

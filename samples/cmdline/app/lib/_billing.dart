@@ -1,11 +1,13 @@
-// Copyright (c) 2013, the project authors. Please see the AUTHORS file
+// Copyright (c) 2017, the project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
-part of dice_example;
+part of dice_cmdline_example;
 
+@di.injectable
 class BillingServiceImpl implements BillingService {
-  @inject
+
+  @di.inject
   CreditProcessor _processor;
 
   Receipt chargeOrder(Order order, CreditCard creditCard) {
@@ -19,14 +21,17 @@ class BillingServiceImpl implements BillingService {
   }
 }
 
+@di.injectable
 class CreditProcessorImpl implements CreditProcessor {
   bool validate(CreditCard card) => card.type.toUpperCase() == "VISA";
 }
 
+@di.injectable
 abstract class BillingService {
   Receipt chargeOrder(Order order, CreditCard creditCard);
 }
 
+@di.injectable
 abstract class CreditProcessor {
   bool validate(CreditCard creditCard);
 }

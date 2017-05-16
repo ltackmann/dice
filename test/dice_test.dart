@@ -98,6 +98,17 @@ main() {
             expect(instances[0].hashCode, instances[1].hashCode);
         }); // end of 'asSingleton' test
 
+        test('asSingleton III', () {
+            final sInjector = new Injector()
+                ..unregister(AnotherSingletonClass)
+                ..register(AnotherSingletonClass).asSingleton();
+
+            final AnotherSingletonClass singleton1 = sInjector.getInstance(AnotherSingletonClass);
+            final AnotherSingletonClass singleton2 = sInjector.getInstance(AnotherSingletonClass);
+
+            expect(singleton1.hashCode, singleton2.hashCode);
+        }); // end of '' test
+
         test('MultiModule', () {
             final myMultiModule = new MyModuleForInstallation();
             var multiInjector = new Injector(myMultiModule);
@@ -135,7 +146,17 @@ main() {
             final MyClass mc = ctorInjector.getInstance(MyClass);
             expect(mc,isNotNull);
             expect(mc.getName(),"CTORInjection - http://www.google.com/ (dart)");
-        }); // end of '' test
+        });
+
+        test('CTOR injection - optional param', () {
+            final ctorInjector = new Injector()
+                ..register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/")
+                ..register(MyClass).toType(CTOROptionalInjection)
+            ;
+            final MyClass mc = ctorInjector.getInstance(MyClass);
+            expect(mc,isNotNull);
+            expect(mc.getName(),"CTORInjection - http://www.google.com/ (C++)");
+        });
 
     });
 
