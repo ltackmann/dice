@@ -6,6 +6,7 @@ part of dice_test;
 
 class MyModule extends Module {
 
+  @override
   configure() {
     register(MyClass).toInstance(new MyClass());
     register(MyOtherClass).toBuilder(() => new MyOtherClass());
@@ -127,7 +128,6 @@ class MyClassToInject {
 }
 
 @injectable
-//@Injectable()
 class MyClass {
   String getName() => "MyClass";
 }
