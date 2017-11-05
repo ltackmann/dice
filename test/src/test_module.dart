@@ -21,12 +21,17 @@ class MyModule extends Module {
     // annotated
     register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
     register(String,annotatedWith: UrlFacebook ).toInstance("http://www.facebook.com/");
+
+    registerMulti(int, named: "multi").toInstance(1);
+    registerMulti(int, named: "multi").toInstance(2);
+
   }
 }
 
 class YourModule extends Module {
   configure() {
     register(YourClass).toType(YourClass);
+    registerMulti(int, named: "multi").toInstance(4);
   }
 }
 
@@ -42,8 +47,8 @@ class MyModuleForInstallation extends Module {
   @override
   configure() {
     install(new MyModule());
-
     register(MySingletonClass).toType(MySpecialSingletonClass2);
+    registerMulti(int, named: "multi").toInstance(3);
   }
 }
 
@@ -101,6 +106,10 @@ class MyClassToInject {
   @UrlFacebook()
   String url3;
 
+  @inject
+  @Named("multi")
+  List<int> multi;
+
   bool assertInjections() {
     // constructors
     var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
@@ -120,9 +129,8 @@ class MyClassToInject {
     var settersToInject = (injections[r'setterToInject'] != null);
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
-
     return constructorsInjected && variablesInjected && settersInjected && stringInjectedByName &&
-        stringInjectedByAnnotation1 && stringInjectedByAnnotation2;
+        stringInjectedByAnnotation1 && stringInjectedByAnnotation2 ;
   }
 }
 

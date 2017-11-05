@@ -19,8 +19,12 @@ class TypeMirrorWrapper {
         : typeMirror = reflectType(type),
             annotationTypeMirror = annotation != null ? reflectType(annotation) : null;
 
+    TypeMirrorWrapper.fromListType(final Type type, this.name, final Type annotation)
+        : typeMirror = reflectType(List, [type]),
+            annotationTypeMirror = annotation != null ? reflectType(annotation) : null;
+
     String get qualifiedName =>
-        symbolAsString(typeMirror.qualifiedName)
+        symbolAsString(typeMirror.qualifiedName)+"<"+typeMirror.typeArguments.toString()+">"
             + (name != null ? "#$name" : "")
             + (annotationTypeMirror != null
                 ? "#${symbolAsString(annotationTypeMirror.qualifiedName)}" : "");
