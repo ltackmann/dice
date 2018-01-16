@@ -251,6 +251,7 @@ class InjectorImpl extends Injector {
         return constructors;
     }
 
+    /** Returns injectable instance members such as variables, setters, constructors that need injection */
     Iterable<DeclarationMirror> injectableDeclarations(ClassMirror classMirror) {
         var declarations = [];
         if (classMirror.superclass != null && classMirror.superclass.reflectedType != Object) { // -- has a superclass
