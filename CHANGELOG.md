@@ -1,3 +1,6 @@
+#### 1.8.0
+* Support Injectable
+
 #### 1.7.0
 * Singleton binding added, Module-installation added
 * Use type annotations

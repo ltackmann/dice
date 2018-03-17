@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+dartanalyzer --fatal-warnings .
+
 if [ "$COVERALLS_TOKEN" ]; then
   # run tests on travis and publish code coverage
   pub global activate dart_coveralls
