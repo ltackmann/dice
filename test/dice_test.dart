@@ -157,6 +157,14 @@ main() {
             expect(mc.getName(),"CTORInjection - http://www.google.com/ (C++)");
         });
 
+        test('Inject class with mixin', () {
+            final ctorInjector = new Injector()
+                ..bind(MyClass).toInstance(new MyStoreClass())
+            ;
+            final MyClass withMixin = ctorInjector.getInstance(MyClass);
+            expect(withMixin,isNotNull);
+            expect(withMixin, new isInstanceOf<MyStoreClass>());
+        });
     });
 
     group('modules - ', () {
