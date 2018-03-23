@@ -16,12 +16,12 @@ abstract class Module {
         _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
             _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
 
-        _logger.info("T ${type.runtimeType} - ${inject.reflectType(type)}");
+        //_logger.info("T ${type.runtimeType} - ${inject.reflectType(type)}");
         
         final registration = new Registration(type);
         final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
 
-        _logger.info("Register: ${typeMirrorWrapper.qualifiedName}");
+        _logger.fine("Register: ${typeMirrorWrapper.qualifiedName}");
 
         _registrations[typeMirrorWrapper] = registration;
         return registration;

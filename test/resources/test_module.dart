@@ -2,7 +2,10 @@
 // for details. All rights reserved. Use of this source code is governed
 // by a Apache license that can be found in the LICENSE file.
 
-part of dice_test;
+library test.resources;
+
+import 'package:dice/dice.dart';
+
 
 class MyModule extends Module {
 
@@ -16,7 +19,7 @@ class MyModule extends Module {
 
     // named
     register(MyClass, named: "MySpecialClass").toType(MySpecialClass);
-    //- register(String, named: "google").toInstance("http://www.google.com/");
+    register(String, named: "google").toInstance("http://www.google.com/");
 
     // annotated
     //- register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
@@ -51,7 +54,7 @@ class MyModuleForInstallation extends Module {
 class MyClassToInject {
   // constructors
   @inject
-  MyClassToInject.inject(/*MyClass constructorParameterToInject*/) {
+  MyClassToInject.namedCTOR(/*MyClass constructorParameterToInject*/) {
     //injections["constructorParameterToInject"] = constructorParameterToInject;
   }
 
@@ -63,7 +66,7 @@ class MyClassToInject {
   set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
 
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
-  
+
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
 
   // TODO named setter injection

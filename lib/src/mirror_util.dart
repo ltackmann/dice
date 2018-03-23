@@ -8,27 +8,43 @@ final Logger _logger = new Logger('dice._validate');
 
 /// Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
 class TypeMirrorWrapper {
-    final TypeMirror typeMirror;
+//    final TypeMirror _typeMirror;
+//
+//    final String _name;
+//
+//    final TypeMirror _annotationTypeMirror;
 
-    final String name;
-    final TypeMirror annotationTypeMirror;
+    final String qualifiedName;
 
-    TypeMirrorWrapper(this.typeMirror, this.name, this.annotationTypeMirror);
+    factory TypeMirrorWrapper(final TypeMirror typeMirror, final String name, final TypeMirror annotationTypeMirror) {
+        return new TypeMirrorWrapper._internal(
+            TypeMirrorWrapper._createQualifiedName(typeMirror.qualifiedName, name, annotationTypeMirror)
+        );
+    }
 
-    TypeMirrorWrapper.fromType(final Type type, this.name, final Type annotation)
-        : typeMirror = inject.reflectType(type),
-            annotationTypeMirror = annotation != null ? inject.reflectType(annotation) : null;
-
-    String get qualifiedName =>
-        typeMirror.qualifiedName
-            + (name != null ? "#$name" : "")
-            + (annotationTypeMirror != null
-                ? "#${(annotationTypeMirror.qualifiedName)}" : "");
+    factory TypeMirrorWrapper.fromType(final Type type, final String name, final Type annotationType) {
+        return new TypeMirrorWrapper._internal(
+            TypeMirrorWrapper._createQualifiedName(
+                inject.canReflectType(type) ? inject.reflectType(type).qualifiedName : type.toString(),
+                name,
+                (annotationType != null ? inject.reflectType(annotationType) : null))
+        );
+    }
 
     get hashCode => qualifiedName.hashCode;
 
     bool operator ==(final Object other) => other is TypeMirrorWrapper
           && this.qualifiedName == other.qualifiedName;
+
+    // private CTOR
+    TypeMirrorWrapper._internal(this.qualifiedName);
+
+    static String _createQualifiedName(final String qualifiedName, final String name, final TypeMirror annotationTypeMirror) {
+        return qualifiedName
+            + (name != null ? "#$name" : "")
+            + (annotationTypeMirror != null
+            ? "#${(annotationTypeMirror.qualifiedName)}" : "");
+    }
 }
 
 // helpers

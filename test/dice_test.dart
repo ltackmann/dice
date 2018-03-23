@@ -9,17 +9,20 @@ library dice_test;
 //    symbols: const ['inject', 'Named'])
 //import 'dart:mirrors';
 
+import 'package:logging/logging.dart';
+
 import 'package:reflectable/reflectable.dart';
 import 'dice_test.reflectable.dart';
 
 import 'package:test/test.dart';
 import 'package:dice/dice.dart';
 
+import 'resources/test_module.dart';
+
 import 'config.dart';
-part 'src/test_module.dart';
 
 main() {
-    configLogging();
+    configLogging(defaultLogLevel: Level.ALL);
     initializeReflectable();
     
     group('injector -', () {
@@ -68,15 +71,15 @@ main() {
             expect((instance as MyClassToInject).assertInjections(), isTrue);
         });
 
-        test('resolveInjections', () {
-            var instance = new MyClassToInject.inject(new MyClass());
-            expect((instance as MyClassToInject).assertInjections(), isFalse);
-
-            var resolvedInstance = injector.resolveInjections(instance);
-
-            expect((resolvedInstance as MyClassToInject).assertInjections(), isTrue);
-            expect(identical(resolvedInstance, instance), isTrue);
-        });
+//-        test('resolveInjections', () {
+//            var instance = new MyClassToInject.inject(new MyClass());
+//            expect((instance as MyClassToInject).assertInjections(), isFalse);
+//
+//            var resolvedInstance = injector.resolveInjections(instance);
+//
+//            expect((resolvedInstance as MyClassToInject).assertInjections(), isTrue);
+//            expect(identical(resolvedInstance, instance), isTrue);
+//        });
 
         test('named injections', () {
             var myClass = injector.getInstance(MyClass);

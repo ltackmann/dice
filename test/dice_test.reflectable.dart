@@ -2,8 +2,8 @@
 // https://github.com/dart-lang/reflectable.
 
 import "dart:core";
-import 'dice_test.dart' as prefix1;
 import 'package:dice/dice.dart' as prefix0;
+import 'resources/test_module.dart' as prefix1;
 
 // ignore:unused_import
 import "package:reflectable/mirrors.dart" as m;
@@ -17,7 +17,7 @@ final _data = {
       <m.TypeMirror>[
         new r.NonGenericClassMirrorImpl(
             r"MyClassToInject",
-            r"dice_test.MyClassToInject",
+            r"test.resources.MyClassToInject",
             7,
             0,
             const prefix0.InjectAnnotation(),
@@ -51,8 +51,8 @@ final _data = {
             {},
             {},
             {
-              r"inject": (b) =>
-                  () => b ? new prefix1.MyClassToInject.inject() : null
+              r"namedCTOR": (b) =>
+                  () => b ? new prefix1.MyClassToInject.namedCTOR() : null
             },
             0,
             0,
@@ -61,7 +61,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MyClass",
-            r"dice_test.MyClass",
+            r"test.resources.MyClass",
             7,
             1,
             const prefix0.InjectAnnotation(),
@@ -79,7 +79,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MyOtherClass",
-            r"dice_test.MyOtherClass",
+            r"test.resources.MyOtherClass",
             7,
             2,
             const prefix0.InjectAnnotation(),
@@ -97,7 +97,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MySpecialClass",
-            r"dice_test.MySpecialClass",
+            r"test.resources.MySpecialClass",
             7,
             3,
             const prefix0.InjectAnnotation(),
@@ -115,7 +115,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"YourClass",
-            r"dice_test.YourClass",
+            r"test.resources.YourClass",
             7,
             4,
             const prefix0.InjectAnnotation(),
@@ -133,7 +133,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MySingletonClass",
-            r"dice_test.MySingletonClass",
+            r"test.resources.MySingletonClass",
             7,
             5,
             const prefix0.InjectAnnotation(),
@@ -156,7 +156,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MySpecialSingletonClass",
-            r"dice_test.MySpecialSingletonClass",
+            r"test.resources.MySpecialSingletonClass",
             7,
             6,
             const prefix0.InjectAnnotation(),
@@ -176,7 +176,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MySpecialSingletonClass2",
-            r"dice_test.MySpecialSingletonClass2",
+            r"test.resources.MySpecialSingletonClass2",
             7,
             7,
             const prefix0.InjectAnnotation(),
@@ -197,7 +197,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"AnotherSingletonClass",
-            r"dice_test.AnotherSingletonClass",
+            r"test.resources.AnotherSingletonClass",
             7,
             8,
             const prefix0.InjectAnnotation(),
@@ -215,7 +215,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"MetaTestClass",
-            r"dice_test.MetaTestClass",
+            r"test.resources.MetaTestClass",
             7,
             9,
             const prefix0.InjectAnnotation(),
@@ -233,7 +233,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"CTORInjection",
-            r"dice_test.CTORInjection",
+            r"test.resources.CTORInjection",
             7,
             10,
             const prefix0.InjectAnnotation(),
@@ -254,7 +254,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"CTOROptionalInjection",
-            r"dice_test.CTOROptionalInjection",
+            r"test.resources.CTOROptionalInjection",
             7,
             11,
             const prefix0.InjectAnnotation(),
@@ -275,7 +275,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"UrlGoogle",
-            r"dice_test.UrlGoogle",
+            r"test.resources.UrlGoogle",
             7,
             12,
             const prefix0.InjectAnnotation(),
@@ -293,7 +293,7 @@ final _data = {
             null),
         new r.NonGenericClassMirrorImpl(
             r"UrlFacebook",
-            r"dice_test.UrlFacebook",
+            r"test.resources.UrlFacebook",
             7,
             13,
             const prefix0.InjectAnnotation(),
@@ -418,7 +418,7 @@ final _data = {
             const <int>[8],
             const prefix0.InjectAnnotation(),
             const <Object>[]),
-        new r.MethodMirrorImpl(r"inject", 0, 0, -1, 0, 0, const <int>[],
+        new r.MethodMirrorImpl(r"namedCTOR", 0, 0, -1, 0, 0, const <int>[],
             const prefix0.InjectAnnotation(), const <Object>[prefix0.inject]),
         new r.MethodMirrorImpl(r"==", 131074, null, -1, 18, 18, const <int>[9],
             const prefix0.InjectAnnotation(), const <Object>[]),
@@ -687,8 +687,8 @@ final _data = {
       },
       <m.LibraryMirror>[
         new r.LibraryMirrorImpl(
-            r"dice_test",
-            Uri.parse(r"reflectable://0/dice_test"),
+            r"test.resources",
+            Uri.parse(r"reflectable://0/test.resources"),
             const prefix0.InjectAnnotation(),
             const <int>[],
             {},

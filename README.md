@@ -4,6 +4,9 @@
 # Dice
 Lightweight dependency injection framework for Dart.
 
+## Tests
+dart tool/build.dart test/dice_test.dart
+
 ## Getting Started
 Dice consists of two parts.
  * **Modules** containing your class registrations.

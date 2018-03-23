@@ -171,6 +171,11 @@ class InjectorImpl extends Injector {
             _logger.info("obj.runtimeType: ${obj.runtimeType}");
         } else {
             _logger.info("obj.runtimeType: ${obj.runtimeType} obj: ${obj}");
+//            final ClassMirror classMirror = inject.reflectType(obj);
+//            final Object object = classMirror.newInstance("namedCTOR", []);
+//            _logger.info(object);
+            
+            //classMirror.newInstance("namedCTOR", []);
         }
         final InstanceMirror im = (obj is Type) ? _newInstance(inject.reflectType(obj)) : inject.reflect(obj);
 
@@ -217,7 +222,13 @@ class InjectorImpl extends Injector {
 
         _logger.info("Type (_newInstance) ${typeMirror}: ${typeMirror.qualifiedName}.${constructor.constructorName}(${positionalArguments},${namedArguments})");
 
-        return (typeMirror as ClassMirror).newInstance(constructor.constructorName, positionalArguments, namedArguments);
+        if(typeMirror is! ClassMirror) {
+            throw "${typeMirror.qualifiedName} is not a ClassMirror";
+        }
+        final ClassMirror classMirror = typeMirror as ClassMirror;
+        final Object instance = classMirror.newInstance(constructor.constructorName, positionalArguments , namedArguments);
+
+        return inject.reflect(instance);
     }
 
     InstanceMirror _injectSetters(final InstanceMirror instanceMirror) {
