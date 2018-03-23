@@ -8,7 +8,7 @@ class MyModule extends Module {
 
   configure() {
     register(MyClass).toInstance(new MyClass());
-    register(MyOtherClass).toBuilder(() => new MyOtherClass());
+    register(MyOtherClass).toBuilder( () => new MyOtherClass());
     register(MyClassToInject);
 
     // Singleton
@@ -16,11 +16,11 @@ class MyModule extends Module {
 
     // named
     register(MyClass, named: "MySpecialClass").toType(MySpecialClass);
-    register(String, named: "google").toInstance("http://www.google.com/");
+    //- register(String, named: "google").toInstance("http://www.google.com/");
 
     // annotated
-    register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
-    register(String,annotatedWith: UrlFacebook ).toInstance("http://www.facebook.com/");
+    //- register(String,annotatedWith: UrlGoogle ).toInstance("http://www.google.com/");
+    //- register(String,annotatedWith: UrlFacebook ).toInstance("http://www.facebook.com/");
   }
 }
 
@@ -47,12 +47,12 @@ class MyModuleForInstallation extends Module {
   }
 }
 
-@injectable
+@inject
 class MyClassToInject {
   // constructors
   @inject
-  MyClassToInject.inject(MyClass constructorParameterToInject) {
-    injections["constructorParameterToInject"] = constructorParameterToInject;
+  MyClassToInject.inject(/*MyClass constructorParameterToInject*/) {
+    //injections["constructorParameterToInject"] = constructorParameterToInject;
   }
 
   // setters
@@ -103,7 +103,7 @@ class MyClassToInject {
 
   bool assertInjections() {
     // constructors
-    var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
+    //-var constructorsInjected = (injections[r'constructorParameterToInject'] != null);
 
     // variables
     var variablesToInject = (variableToInject != null && _variableToInject != null);
@@ -121,33 +121,33 @@ class MyClassToInject {
     var settersNotToInject = (injections[r'setterNotToInject'] == null && injections[r'_setterNotToInject'] == null);
     var settersInjected = settersToInject && settersNotToInject;
 
-    return constructorsInjected && variablesInjected && settersInjected && stringInjectedByName &&
+    return /*constructorsInjected &&*/ variablesInjected && settersInjected && stringInjectedByName &&
         stringInjectedByAnnotation1 && stringInjectedByAnnotation2;
   }
 }
 
-@injectable
+@inject
 //@Injectable()
 class MyClass {
   String getName() => "MyClass";
 }
 
-@injectable
+@inject
 class MyOtherClass {
   String getName() => "MyOtherClass";
 }
 
-@injectable
+@inject
 class MySpecialClass implements MyClass {
   String getName() => "MySpecialClass";
 }
 
-@injectable
+@inject
 class YourClass {
   String getName() => "YourClass";
 }
 
-@injectable
+@inject
 class MySingletonClass {
     static int instanceCounter = 1;
 
@@ -161,27 +161,27 @@ class MySingletonClass {
     String getName() => "MySingletonClass - InstanceID: ${instanceID}";
 }
 
-@injectable
+@inject
 class MySpecialSingletonClass extends MySingletonClass {
     String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
 }
 
-@injectable
+@inject
 class MySpecialSingletonClass2 extends MySingletonClass {
     String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
 }
 
-@injectable
+@inject
 class AnotherSingletonClass {
     String getName() => "AnotherSingletonClass";
 }
 
-@injectable
+@inject
 class MetaTestClass extends MyClass {
     String getName() => "MetaTestClass";
 }
 
-@injectable
+@inject
 class CTORInjection extends MyClass {
     final String url;
     final String lang;
@@ -194,7 +194,7 @@ class CTORInjection extends MyClass {
     String getName() => "CTORInjection - $url ($lang)";
 }
 
-@injectable
+@inject
 class CTOROptionalInjection extends MyClass {
     final String url;
     final String lang;
@@ -208,10 +208,10 @@ class CTOROptionalInjection extends MyClass {
 }
 
 // Class Annotations for URLs
-@injectable
+@inject
 class UrlGoogle { const UrlGoogle(); }
 
-@injectable
+@inject
 class UrlFacebook { const UrlFacebook(); }
 
 class IAmAMixin { }

@@ -51,7 +51,7 @@ class Registration {
         _asSingleton = true;
     }
 
-    bool _isClass(var instance) => reflect(instance).type is! FunctionTypeMirror;
+    bool _isClass(var instance) => inject.reflect(instance).type is! FunctionTypeMirror;
 
     TypeBuilder _builder;
 

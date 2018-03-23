@@ -4,7 +4,7 @@
 
 part of dice_cmdline_example;
 
-@di.injectable
+@di.inject
 class BillingServiceImpl implements BillingService {
 
   @di.inject
@@ -21,17 +21,17 @@ class BillingServiceImpl implements BillingService {
   }
 }
 
-@di.injectable
+@di.inject
 class CreditProcessorImpl implements CreditProcessor {
   bool validate(CreditCard card) => card.type.toUpperCase() == "VISA";
 }
 
-@di.injectable
+@di.inject
 abstract class BillingService {
   Receipt chargeOrder(Order order, CreditCard creditCard);
 }
 
-@di.injectable
+@di.inject
 abstract class CreditProcessor {
   bool validate(CreditCard creditCard);
 }

@@ -9,17 +9,20 @@ abstract class Module {
     final Logger _logger = new Logger('dice.Module');
 
     /// register a [type] with [named] (optional) to an implementation
-    Registration register(Type type, { final String named: null, final Type annotatedWith: null }) {
+    Registration register(final Type type, { final String named: null, final Type annotatedWith: null }) {
         _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
             _ASSERT_REGISTER_TYPE_NOT_MARKED(type));
 
         _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
             _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
 
+        _logger.info("T ${type.runtimeType} - ${inject.reflectType(type)}");
+        
         final registration = new Registration(type);
         final typeMirrorWrapper = new TypeMirrorWrapper.fromType(type, named, annotatedWith);
 
-        _logger.fine("Register: ${typeMirrorWrapper.qualifiedName}");
+        _logger.info("Register: ${typeMirrorWrapper.qualifiedName}");
+
         _registrations[typeMirrorWrapper] = registration;
         return registration;
     }

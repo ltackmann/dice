@@ -10,6 +10,10 @@ environment:
 dependencies:
   logging: ^0.11.0
 
+  reflectable:
+    #'^1.0.0'
+    git: git@github.com:dart-lang/reflectable.git
+
 dev_dependencies:
   browser: ^0.10.0
 

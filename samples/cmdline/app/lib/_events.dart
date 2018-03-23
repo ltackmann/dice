@@ -4,7 +4,7 @@
 
 part of dice_cmdline_example;
 
-@di.injectable
+@di.inject
 abstract class Emailer {
     void sendMail();
 }
@@ -23,7 +23,7 @@ class EmailerToGMX implements Emailer {
     }
 }
 
-@di.injectable
+@di.inject
 class EventScheduler {
 
     final Emailer _emailer;

@@ -5,10 +5,10 @@
 @TestOn("!chrome")
 library dice_vm_only_test;
 
-@MirrorsUsed(
-    metaTargets: const [ Inject ],
-    symbols: const ['inject', 'Named'])
-import 'dart:mirrors';
+//@MirrorsUsed(
+//    metaTargets: const [ Inject ],
+//    symbols: const ['inject', 'Named'])
+//import 'dart:mirrors';
 
 import 'package:test/test.dart';
 import 'package:dice/dice.dart';
@@ -23,21 +23,21 @@ class MyModule extends Module {
     }
 }
 
-@injectable
+@inject
 MyFunctionToInject() => "MyFunction";
 
-@injectable
+@inject
 typedef String MyFunction();
 
-@injectable
+@inject
 typedef String MyClassFunction();
 
-@injectable
+@inject
 class MyClass {
     String getName() => "MyClass";
 }
 
-@injectable
+@inject
 class CTORInjectionWithDefaultParam extends MyClass {
     final String lang;
 

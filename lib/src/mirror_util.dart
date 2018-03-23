@@ -16,14 +16,14 @@ class TypeMirrorWrapper {
     TypeMirrorWrapper(this.typeMirror, this.name, this.annotationTypeMirror);
 
     TypeMirrorWrapper.fromType(final Type type, this.name, final Type annotation)
-        : typeMirror = reflectType(type),
-            annotationTypeMirror = annotation != null ? reflectType(annotation) : null;
+        : typeMirror = inject.reflectType(type),
+            annotationTypeMirror = annotation != null ? inject.reflectType(annotation) : null;
 
     String get qualifiedName =>
-        symbolAsString(typeMirror.qualifiedName)
+        typeMirror.qualifiedName
             + (name != null ? "#$name" : "")
             + (annotationTypeMirror != null
-                ? "#${symbolAsString(annotationTypeMirror.qualifiedName)}" : "");
+                ? "#${(annotationTypeMirror.qualifiedName)}" : "");
 
     get hashCode => qualifiedName.hashCode;
 
@@ -32,12 +32,20 @@ class TypeMirrorWrapper {
 }
 
 // helpers
-String symbolAsString(Symbol symbol) => MirrorSystem.getName(symbol);
+String symbolAsString(final Symbol symbol) => symbol.toString();
 
-Symbol stringAsSymbol(String string) => new Symbol(string);
+Symbol stringAsSymbol(final String string) => new Symbol(string);
 
 bool isInjectable(final Type type) {
-    return reflectType(type).metadata.contains(reflect(injectable));
+    final List<Object> metadata = inject.reflectType(type).metadata;
+//    metadata.forEach((final Object object) {
+//        _logger.info(object.runtimeType);
+//    });
+
+    final bool hasAnnotation = metadata.firstWhere((final Object object) => object is InjectAnnotation,orElse: null) != null;
+//    _logger.info("Has Annotation $hasAnnotation");
+    
+    return hasAnnotation;
 }
 
 /// Makes some basic validation checks.

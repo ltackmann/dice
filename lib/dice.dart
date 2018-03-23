@@ -5,12 +5,13 @@
 /** Lightweight dependency injection framework for Dart. */
 library dice;
 
-@MirrorsUsed(
-    metaTargets: const [ Inject, Injectable ],
-    symbols: const ['inject', 'injectable', 'Named'])
-import 'dart:mirrors';
+//@MirrorsUsed(
+//    metaTargets: const [ Inject, Injectable ],
+//    symbols: const ['inject', 'injectable', 'Named'])
+//import 'dart:mirrors';
 import 'dart:collection';
 
+import 'package:reflectable/reflectable.dart';
 import 'package:logging/logging.dart';
 
 part 'src/annotations.dart';
@@ -19,3 +20,7 @@ part 'src/injector.dart';
 part 'src/mirror_util.dart';
 part 'src/module.dart';
 part 'src/Registration.dart';
+
+/// Compatibility to JSR-330
+const InjectAnnotation inject = const InjectAnnotation();
+
