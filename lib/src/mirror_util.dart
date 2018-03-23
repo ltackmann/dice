@@ -27,7 +27,8 @@ class TypeMirrorWrapper {
 
     get hashCode => qualifiedName.hashCode;
 
-    bool operator ==(TypeMirrorWrapper other) => this.qualifiedName == other.qualifiedName;
+    bool operator ==(final Object other) => other is TypeMirrorWrapper
+          && this.qualifiedName == other.qualifiedName;
 }
 
 // helpers

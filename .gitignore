@@ -17,3 +17,4 @@ packages
 *.js_
 *.js.deps
 *.js.map
+.dart_tool
