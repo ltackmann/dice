@@ -24,6 +24,22 @@ abstract class Module {
         return registration;
     }
 
+    Registration registerMulti(Type type, { final String named: null, final Type annotatedWith: null }) {
+      _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+          _ASSERT_REGISTER_TYPE_NOT_MARKED(type));
+
+      _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+          _ASSERT_REGISTER_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
+      final typeMirrorWrapper = new TypeMirrorWrapper.fromListType(type, named, annotatedWith);
+
+      _logger.fine("Register: ${typeMirrorWrapper.qualifiedName}");
+      _registrations.putIfAbsent(typeMirrorWrapper, () => new RegistrationMulti(type));
+      var registration = new Registration(type);
+      (_registrations[typeMirrorWrapper] as RegistrationMulti).addRegistration(registration);
+      return registration;
+    }
+
     /// Compatibility with di:package
     Registration bind(final Type type, { final String named: null, final Type annotatedWith: null }) =>
         register(type, named: named, annotatedWith: annotatedWith);
@@ -35,7 +51,13 @@ abstract class Module {
     /// Overwriting when conflicts are found.
     void install(final Module module) {
         module.configure();
-        _registrations.addAll(module._registrations);
+        module._registrations.forEach((key,value){
+          if(value is RegistrationMulti) {
+            var regs = (_registrations[key] as RegistrationMulti)?._registrations;
+            value._registrations.addAll(regs ?? []);
+          }
+          _registrations[key]=value;
+        });
     }
 
     bool _hasRegistrationFor(TypeMirror type, String name, TypeMirror annotation) =>
@@ -56,7 +78,14 @@ class _ModuleContainer extends Module {
     configure() {
         _modules.fold(_registrations, (acc, module) {
             module.configure();
-            return acc..addAll(module._registrations);
+            module._registrations.forEach((key,value){
+              if(value is RegistrationMulti) {
+                var regs = (acc[key] as RegistrationMulti)?._registrations;
+                value._registrations.addAll(regs ?? []);
+              }
+              acc[key]=value;
+            });
+            return acc;
         });
     }
 

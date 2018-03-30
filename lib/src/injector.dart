@@ -56,6 +56,8 @@ abstract class Injector {
     /// Get new instance of [type] with [named] (optional) and all dependencies resolved
     dynamic getInstance(Type type, { final String named: null, final Type annotatedWith: null });
 
+    dynamic getMultiInstance(Type type, { final String named: null, final Type annotatedWith: null });
+
     /// Compatibility with di:package
     /// see [getInstance]
     dynamic get(Type type, { final String named: null, final Type annotatedWith: null })
@@ -131,6 +133,18 @@ class InjectorImpl extends Injector {
         return _getInstanceFor(typeMirror, named, annotatedWith);
     }
 
+    dynamic getMultiInstance(Type type, { final String named: null, final Type annotatedWith: null }){
+        _validate(annotatedWith == null && named == null ? isInjectable(type) : true,
+            _ASSERT_GET_TYPE_NOT_MARKED(type));
+
+        _validate(annotatedWith != null ? isInjectable(annotatedWith) : true,
+            _ASSERT_GET_ANNOTATION_NOT_MARKED(type,annotatedWith));
+
+        var typeMirror = reflectType(List,[type]);
+        return _getInstanceFor(typeMirror, named, annotatedWith);
+    }
+
+
     @override
     Object resolveInjections(Object obj) {
         var instanceMirror = reflect(obj);
@@ -156,12 +170,25 @@ class InjectorImpl extends Injector {
             // If we have one - return it
             return registration._instance;
         }
+        var instance;
+        if(registration is RegistrationMulti) {
+            RegistrationMulti reg = registration as RegistrationMulti;
+            instance = reg._registrations.map((r){
+                final obj = r._builder();
 
-        final obj = registration._builder();
+                InstanceMirror im = (obj is Type)
+                    ? _newInstance(reflectClass(obj))
+                    : reflect(obj);
+                return _resolveInjections(im);
+            }).toList(growable: false);
+        } else {
+            final obj = registration._builder();
 
-        InstanceMirror im = (obj is Type) ? _newInstance(reflectClass(obj)) : reflect(obj);
-        final instance = _resolveInjections(im);
-
+            InstanceMirror im = (obj is Type)
+                ? _newInstance(reflectClass(obj))
+                : reflect(obj);
+            instance = _resolveInjections(im);
+        }
         if (registration._asSingleton) {
             // Remember the instance
             registration._instance = instance;

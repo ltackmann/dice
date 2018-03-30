@@ -8,6 +8,7 @@ library dice_test;
     metaTargets: const [ Inject],
     symbols: const ['inject', 'Named'])
 import 'dart:mirrors';
+import 'package:collection/collection.dart';
 
 import 'package:test/test.dart';
 import 'package:dice/dice.dart';
@@ -48,6 +49,15 @@ main() {
             expect(instance, isNotNull);
             expect(instance, new isInstanceOf<MyClassToInject>());
             expect((instance as MyClassToInject).assertInjections(), isTrue);
+        });
+
+        test('getInstanceMulti', () {
+            var instance = injector.getMultiInstance(int, named: "multi");
+            expect(instance, isNotNull);
+            expect(instance, new isInstanceOf<List<int>>());
+            expect((instance as List<int>), [1,2]);
+            var my = injector.getInstance(MyClassToInject);
+            expect((my as MyClassToInject).assertInjections(), isTrue);
         });
 
         test('resolveInjections', () {
@@ -118,6 +128,17 @@ main() {
             expect(singleton, new isInstanceOf<MySpecialSingletonClass2>());
         }); // end of '' test
 
+        test('getInstanceMulti with MultiModule', () {
+            final myMultiModule = new MyModuleForInstallation();
+            var multiInjector = new Injector(myMultiModule);
+            var instance = multiInjector.getMultiInstance(int, named: "multi");
+            expect(instance, isNotNull);
+            expect(instance, new isInstanceOf<List<int>>());
+            expect((instance as List<int>), [1,2,3]);
+            var my = injector.getInstance(MyClassToInject);
+            expect((my as MyClassToInject).assertInjections(), isTrue);
+        });
+
         test('Class injection', () {
             final Injector metaInjector = new Injector();
 
@@ -179,6 +200,16 @@ main() {
 
             expect(myClass, new isInstanceOf<MyClass>());
             expect(yourClass, new isInstanceOf<YourClass>());
+        });
+        test('getInstanceMulti with MultiModule', () {
+            var injector = new Injector.fromModules([new YourModule(), new MyModule()]);
+
+            var instance = injector.getMultiInstance(int, named: "multi");
+            expect(instance, isNotNull);
+            expect(instance, new isInstanceOf<List<int>>());
+            expect((instance as List<int>), [1,2,4]);
+            var my = injector.getInstance(MyClassToInject);
+            expect((my as MyClassToInject).assertInjections(), isTrue);
         });
 
         test('register runtime', () {
@@ -267,7 +298,8 @@ main() {
                 '_namedVariableToInject',
                 'url1',
                 'url2',
-                'url3'
+                'url3',
+                'multi'
             ];
             expect(variables, unorderedEquals(expected));
         });
