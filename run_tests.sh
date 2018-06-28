@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-dartanalyzer --fatal-warnings .
+#dartanalyzer --fatal-warnings .
 
 if [ "$COVERALLS_TOKEN" ]; then
   # run tests on travis and publish code coverage
@@ -13,5 +13,5 @@ if [ "$COVERALLS_TOKEN" ]; then
     test/dice_test.dart
 else
   # run tests locally
-  dart --checked test/dice_test.dart
+  dart test/dice_test.dart
 fi

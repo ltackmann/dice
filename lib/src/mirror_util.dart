@@ -4,12 +4,9 @@
 
 part of dice;
 
-final Logger _logger = new Logger('dice._validate');
-
 /// Wrapper for [TypeMirror] to support multiple named registration for the same [Type] */
 class TypeMirrorWrapper {
     final TypeMirror typeMirror;
-
     final String name;
     final TypeMirror annotationTypeMirror;
 
@@ -27,7 +24,8 @@ class TypeMirrorWrapper {
 
     get hashCode => qualifiedName.hashCode;
 
-    bool operator ==(TypeMirrorWrapper other) => this.qualifiedName == other.qualifiedName;
+    @override
+    bool operator ==(Object other) => (other is TypeMirrorWrapper) ? this.qualifiedName == other.qualifiedName : false;
 }
 
 // helpers

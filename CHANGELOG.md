@@ -1,5 +1,10 @@
+#### 2.0.0
+* Support Dart 2
+* Initial changers to in the future support Flutter and Angular 5
+
 #### 1.8.0
 * Support Injectable
+* Support custom annotations for injections, allowing users to mark their own annotations for use with injections
 
 #### 1.7.0
 * Singleton binding added, Module-installation added

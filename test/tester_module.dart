@@ -31,10 +31,10 @@ class YourModule extends Module {
 }
 
 class MySingletonModule extends Module {
-    configure() {
-        // Singleton
-        register(AnotherSingletonClass).asSingleton();
-    }
+  configure() {
+    // Singleton
+    register(AnotherSingletonClass).asSingleton();
+  }
 }
 
 class MyModuleForInstallation extends Module {
@@ -63,7 +63,7 @@ class MyClassToInject {
   set _setterToInject(MyClass setterToInject) => injections["_setterToInject"] = setterToInject;
 
   set setterNotToInject(MyClass setterNotToInject) => injections["setterNotToInject"] = setterNotToInject;
-  
+
   set _setterNotToInject(MyClass setterNotToInject) => injections["_setterNotToInject"] = setterNotToInject;
 
   // TODO named setter injection
@@ -149,62 +149,62 @@ class YourClass {
 
 @injectable
 class MySingletonClass {
-    static int instanceCounter = 1;
+  static int instanceCounter = 1;
 
-    /// Remember the actual instance
-    final int instanceID;
+  /// Remember the actual instance
+  final int instanceID;
 
-    MySingletonClass() : instanceID = instanceCounter {
-        instanceCounter++;
-    }
+  MySingletonClass() : instanceID = instanceCounter {
+    instanceCounter++;
+  }
 
-    String getName() => "MySingletonClass - InstanceID: ${instanceID}";
+  String getName() => "MySingletonClass - InstanceID: ${instanceID}";
 }
 
 @injectable
 class MySpecialSingletonClass extends MySingletonClass {
-    String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
+  String getName() => "MySpecialSingletonClass - InstanceID: ${instanceID}";
 }
 
 @injectable
 class MySpecialSingletonClass2 extends MySingletonClass {
-    String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
+  String getName() => "MySpecialSingletonClass2 - InstanceID: ${instanceID}";
 }
 
 @injectable
 class AnotherSingletonClass {
-    String getName() => "AnotherSingletonClass";
+  String getName() => "AnotherSingletonClass";
 }
 
 @injectable
 class MetaTestClass extends MyClass {
-    String getName() => "MetaTestClass";
+  String getName() => "MetaTestClass";
 }
 
 @injectable
 class CTORInjection extends MyClass {
-    final String url;
-    final String lang;
+  final String url;
+  final String lang;
 
-    @inject
-    CTORInjection(@UrlGoogle() final String this.url,@Named("language") final String language)
-        : lang = language;
+  @inject
+  CTORInjection(@UrlGoogle() final String this.url,@Named("language") final String language)
+      : lang = language;
 
-    @override
-    String getName() => "CTORInjection - $url ($lang)";
+  @override
+  String getName() => "CTORInjection - $url ($lang)";
 }
 
 @injectable
 class CTOROptionalInjection extends MyClass {
-    final String url;
-    final String lang;
+  final String url;
+  final String lang;
 
-    @inject
-    CTOROptionalInjection(@UrlGoogle() final String this.url,[ final String language ])
-        : lang = language ?? "C++";
+  @inject
+  CTOROptionalInjection(@UrlGoogle() final String this.url,[ final String language ])
+      : lang = language ?? "C++";
 
-    @override
-    String getName() => "CTORInjection - $url ($lang)";
+  @override
+  String getName() => "CTORInjection - $url ($lang)";
 }
 
 // Class Annotations for URLs

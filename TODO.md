@@ -1,2 +1,3 @@
 - Flutter Example
 - Document how to use annotatedWith
+- fix broken CTOR test

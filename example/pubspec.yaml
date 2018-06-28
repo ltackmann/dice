@@ -1,7 +1,7 @@
-name: dice_sample_cmdline
+name: dice_example
 version: 0.1.0
 author: Mike Mitterer <office@mikemitterer.at>
-description: Dice-Test on the cmdline
+description: Dice examples
 homepage: https://github.com/ltackmann/dice
 
 environment:

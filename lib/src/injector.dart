@@ -182,7 +182,7 @@ class InjectorImpl extends Injector {
 
         // that has the greatest number of parameters to inject, optional included
         MethodMirror constructor = constructors.fold(null,
-                (MethodMirror previous, MethodMirror element) =>
+                (MethodMirror previous, DeclarationMirror element) =>
                     previous == null
                         || _injectableParameters(previous).length < _injectableParameters(element).length
                             ? element : previous);
@@ -215,7 +215,7 @@ class InjectorImpl extends Injector {
 
     InstanceMirror _injectVariables(InstanceMirror instanceMirror) {
         var variables = injectableVariables(instanceMirror.type);
-        variables.forEach((variable) {
+        variables.forEach((VariableMirror variable) {
             final _Annotation _annotation = new _Annotation.fromMirror(this, variable);
 
             final instanceToInject = _getInstanceFor(variable.type, _annotation.name, _annotation.type);
@@ -232,8 +232,14 @@ class InjectorImpl extends Injector {
     }
 
     /** Returns variables that can be injected */
-    Iterable<DeclarationMirror> injectableVariables(ClassMirror classMirror) {
-        return injectableDeclarations(classMirror).where(_isVariable);
+    Iterable<VariableMirror> injectableVariables(ClassMirror classMirror) {
+        var res = injectableDeclarations(classMirror).where(_isVariable).fold(new List<VariableMirror>(), (vms, dm) {
+            if(dm is! VariableMirror) {
+                throw "unspported variable type";
+            }
+            return vms..add(dm as VariableMirror);
+        });
+        return res;
     }
 
     /** Returns constructors that can be injected */
@@ -253,7 +259,7 @@ class InjectorImpl extends Injector {
 
     /** Returns injectable instance members such as variables, setters, constructors that need injection */
     Iterable<DeclarationMirror> injectableDeclarations(ClassMirror classMirror) {
-        var declarations = [];
+        var declarations = <DeclarationMirror>[];
         if (classMirror.superclass != null && classMirror.superclass.reflectedType != Object) { // -- has a superclass
             declarations.addAll(injectableDeclarations(classMirror.superclass)); // -- recursion
         }
@@ -323,5 +329,4 @@ class InjectorImpl extends Injector {
             return _hasRegistrationFor(pm.type, null, null);
         });
     }
-
 }
