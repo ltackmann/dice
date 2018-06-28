@@ -214,3 +214,6 @@ class UrlGoogle { const UrlGoogle(); }
 @injectable
 class UrlFacebook { const UrlFacebook(); }
 
+class IAmAMixin { }
+class MyStoreClass extends MyClass with IAmAMixin {}
+
